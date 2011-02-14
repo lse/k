@@ -40,4 +40,4 @@ MNT	= /mnt
 CFLAGS	= -W -Wall -nostdinc -fno-builtin -g3 -gdwarf-2 -m32
 # SSP causes compilation problems on Ubuntu
 CFLAGS	+= -fno-stack-protector
-LDFLAGS	= -nostdlib
+LDFLAGS	= -nostdlib -m32
