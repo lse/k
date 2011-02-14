@@ -27,6 +27,7 @@ TARGET	= k
 OBJS	=	crt0.o		\
 		main.o		\
 		write.o		\
+		pm.o		\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
