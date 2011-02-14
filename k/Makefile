@@ -28,6 +28,7 @@ OBJS	=	crt0.o		\
 		main.o		\
 		write.o		\
 		pm.o		\
+		events.o	\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
