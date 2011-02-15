@@ -35,6 +35,9 @@ OBJS	=	crt0.o		\
 		pit.o		\
 		syscall.o	\
 		syscall_gate.o	\
+		vga.o		\
+		libvga.o	\
+		kfs.o		\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
