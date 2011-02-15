@@ -112,21 +112,6 @@ static void	splash_screen()
     }
 }
 
-/*
- *
- */
-
-static void	delay(unsigned long		quantum)
-{
-  unsigned long	t;
-
-  t = gettick();
-  while (gettick() - t < quantum)
-    ;
-  jiffies++;
-}
-
-
 void		speed(void)
 {
   int		x = 10;
@@ -173,6 +158,7 @@ static void	game_loop(void)
 {
   while (1)
     {
+      unsigned long t = gettick();
       if (!skater.trick_delay)
 	switch (getkey())
 	  {
@@ -205,7 +191,13 @@ static void	game_loop(void)
       speed();
       draw_end();
 
-      delay(8);
+      /*
+       * 8ms between frames
+       */
+      while (gettick() - t <= 8)
+          ;
+      jiffies++;
+
       scroll();
     }
 }
