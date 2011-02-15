@@ -33,6 +33,8 @@ OBJS	=	crt0.o		\
 		isr.o		\
 		kbd.o		\
 		pit.o		\
+		syscall.o	\
+		syscall_gate.o	\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
