@@ -309,7 +309,6 @@ void			switch_graphic(void)
 {
   if (setvideo(VIDEO_GRAPHIC))
     blue_screen ("Unable to switch to graphic mode");
-  framebuffer = videoaddr();
   offbuffer = malloc (FB_SIZE);
 }
 
@@ -321,7 +320,6 @@ void			switch_text(void)
 {
   if (setvideo(VIDEO_TEXT))
     blue_screen ("Unable to switch to text mode");
-  framebuffer = NULL;
   free (offbuffer);
 }
 
@@ -331,7 +329,7 @@ void			switch_text(void)
 
 void			draw_begin(void)
 {
-  draw_clear (CONS_BLACK);
+    draw_clear(CONS_BLACK);
 }
 
 /*
@@ -341,7 +339,8 @@ void			draw_begin(void)
 
 void			draw_end(void)
 {
-  memcpy (framebuffer, offbuffer, FB_SIZE);
+  swap_frontbuffer(offbuffer);
+  /*memcpy (framebuffer, offbuffer, FB_SIZE);*/
 }
 
 /*
