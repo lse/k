@@ -32,6 +32,7 @@ OBJS	=	crt0.o		\
 		pic.o		\
 		isr.o		\
 		kbd.o		\
+		pit.o		\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
