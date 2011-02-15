@@ -46,6 +46,7 @@ static int	splash_screen(void)
   getmouse(&mouse_x, &mouse_y, &buttons);
   while (k != KEY_ENTER && !(buttons & 1))
     {
+      t = gettick ();
 
       getmouse(&mouse_x, &mouse_y, &buttons);
       k = getkey ();
@@ -75,8 +76,7 @@ static int	splash_screen(void)
        */
 
       blink = (blink + 1) % 10;
-      t = gettick ();
-      while (gettick () - t < 66)
+      while (gettick () - t < 33)
 	;
     }
 
@@ -293,7 +293,7 @@ static void	game_loop(t_image*	img)
     /*
      * 33 ms sync between each frame.
      */
-    while (gettick () - t <= 33)
+    while (gettick () - t <= 10)
       ;
   }
 
