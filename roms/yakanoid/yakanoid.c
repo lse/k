@@ -31,6 +31,7 @@ static void	splash_screen(void)
 
   while (getkey() == -1)
     {
+      t = gettick ();
       draw_begin ();
       draw_text ("YAKANOID", 160 - 4 * 8, 10, 23, 0);
       //draw_image (yaka, 105, 30); // For YAKA2008
@@ -40,7 +41,6 @@ static void	splash_screen(void)
       draw_text ("Kernel option - LSE - 2007-2008", 5, 190, 208, 0);
       draw_end ();
       blink = (blink + 1) % 10;
-      t = gettick ();
       while (gettick () - t < 66)
 	;
     }
@@ -73,6 +73,7 @@ static void	game_loop(void)
   dy = -1;
   while (1)
     {
+      t = gettick ();
       draw_begin ();
 
       draw_line (10, 0, 10, 199, 18);
@@ -183,6 +184,8 @@ static void	game_loop(void)
 	}
       }
 
+      while (gettick () - t < 8)
+          ;
       draw_end ();
     }
 }

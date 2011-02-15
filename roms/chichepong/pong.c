@@ -41,6 +41,8 @@ static void	splash_screen(void)
 
   while (getkey() == -1)
     {
+      t = gettick ();
+
       draw_begin ();
       draw_image (img, 5, 10);
       draw_text ("   Chiche Pong   ", 160, 50, RED, 0);
@@ -55,8 +57,7 @@ static void	splash_screen(void)
        */
 
       blink = (blink + 1) % 10;
-      t = gettick ();
-      while (gettick () - t < 66)
+      while (gettick () - t <= 66)
 	;
     }
 
@@ -202,7 +203,6 @@ static void	game_loop(void)
 	    {
 	      draw_text ("You loose...", 112, 96, RED, 0);
 	      draw_end();
-	      t = gettick ();
 	      while (gettick () - t < 1000)
 		;
 	      player1 = 100;
