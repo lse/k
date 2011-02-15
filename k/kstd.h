@@ -192,9 +192,9 @@ int close(int fd);
 int setvideo(int mode);
 
 /* videoaddr */
-# define SYSCALL_VIDEOADDR	10
+# define SYSCALL_SWAP_FRONTBUFFER	10
 
-void* videoaddr(void);
+void swap_frontbuffer(const void *buffer);
 
 /* getpalette */
 # define SYSCALL_GETPALETTE	11

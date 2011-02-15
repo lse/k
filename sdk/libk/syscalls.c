@@ -78,9 +78,9 @@ int setvideo(int mode)
   return ((int) int80(SYSCALL_SETVIDEO, mode));
 }
 
-void* videoaddr(void)
+void swap_frontbuffer(const void *buffer)
 {
-  return ((void*) int80(SYSCALL_VIDEOADDR));
+  return int80(SYSCALL_SWAP_FRONTBUFFER, buffer);
 }
 
 void getpalette(t_palette* palette)

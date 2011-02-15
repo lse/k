@@ -28,6 +28,7 @@ OBJS	=	crt0.o		\
 		main.o		\
 		write.o		\
 		pm.o		\
+		sbrk.o		\
 		events.o	\
 		pic.o		\
 		isr.o		\
@@ -38,6 +39,7 @@ OBJS	=	crt0.o		\
 		vga.o		\
 		libvga.o	\
 		kfs.o		\
+		exec.o		\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
