@@ -21,31 +21,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include ../config.mk
+include ../../config.mk
 
-TARGET	= k
-OBJS	=	crt0.o		\
-		main.o		\
-		write.o		\
-		pm.o		\
-		sbrk.o		\
-		events.o	\
-		pic.o		\
-		isr.o		\
-		kbd.o		\
-		pit.o		\
-		syscall.o	\
-		syscall_gate.o	\
-		vga.o		\
-		libvga.o	\
-		kfs.o		\
-		exec.o		\
-		sound.o		\
-		serial.o	\
-		malloc.o
+TARGET	  = rom_prog
+OBJS	  = kchat.o
+ROM_FILE  = ../rom
+ROM_TITLE = "kchat"
+ROM_FILES = $(TARGET) intro.ksf
 
-CFLAGS	+= -I ../sdk/libc
-LDFLAGS += -T k.lds -L../sdk/libc -lc
+CFLAGS	+= -I ../../sdk/libk -I ../../sdk/libc
+LDFLAGS	+= -L ../../sdk/libk -L ../../sdk/libc -lk -lc -T ../roms.lds
+
+MKKFS	= ../../sdk/mkkfs/mkkfs
 
 all: $(TARGET)
 
@@ -55,11 +42,11 @@ $(TARGET): $(OBJS)
 %o: %c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-%o: %S
-	$(CC) $(CFLAGS) -c $^ -o $@
-
 clean:
 	$(RM) $(OBJS)
 
 distclean: clean
 	$(RM) $(TARGET)
+
+rom: $(TARGET)
+	$(MKKFS) -r $(ROM_FILE) -n $(ROM_TITLE) -f $(ROM_FILES)
