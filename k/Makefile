@@ -40,6 +40,7 @@ OBJS	=	crt0.o		\
 		libvga.o	\
 		kfs.o		\
 		exec.o		\
+		sound.o		\
 		malloc.o
 
 CFLAGS	+= -I ../sdk/libc
