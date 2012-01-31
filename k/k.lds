@@ -43,4 +43,6 @@ SECTIONS
 	{
 		*(.data) *(.bss) *(COMMON)
 	}
+
+	PROVIDE(_end = .);
 }
