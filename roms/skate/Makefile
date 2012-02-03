@@ -46,7 +46,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $^ -o $@ $(LDFLAGS)
 
-%o: %c
+%.o: %.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
