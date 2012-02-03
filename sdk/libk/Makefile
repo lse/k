@@ -34,11 +34,12 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(AR) -rcs $@ $^
 
-%o: %c
+%.o: %.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-%o: %S
+%.o: %.S
 	$(CC) $(CFLAGS) -c $^ -o $@
+
 clean:
 	$(RM) $(OBJS)
 
