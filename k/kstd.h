@@ -126,6 +126,12 @@ enum
   KEY_SUPPR		= 83,
 } e_kdb_codes;
 
+enum
+{
+  KEY_PRESSED,
+  KEY_RELEASED,
+} e_k_mode;
+
 /* mouse */
 enum
 {
@@ -226,4 +232,9 @@ int send(int port, void* data, size_t len);
 
 int recv(int port, void* data, size_t len);
 
+/* getkeymode */
+# define SYSCALL_GETKEYMODE		17
+
+int getkeymode(int mode)
+;
 #endif /* !KSTD_H_ */

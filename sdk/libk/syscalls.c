@@ -107,3 +107,8 @@ int recv(int port, void* data, size_t len)
 {
   return ((int) int80(SYSCALL_RECV, port, data, len));
 }
+
+int getkeymode(int mode)
+{
+  return ((int) int80(SYSCALL_GETKEYMODE, mode));
+}
