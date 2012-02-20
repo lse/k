@@ -32,7 +32,7 @@ SUBDIRS		= $(K_PATH) $(ROMS_PATH) $(SDK_PATH)
 K		= $(K_PATH)/k
 ROM		= $(ROMS_PATH)/rom
 
-GAME		?= chichepong
+GAME		?= KGameBoy
 
 FLOPPY		= k_floppy
 USBSTICK	= k_usbstick
