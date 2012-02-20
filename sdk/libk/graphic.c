@@ -320,7 +320,7 @@ void			switch_text(void)
 {
   if (setvideo(VIDEO_TEXT))
     blue_screen ("Unable to switch to text mode");
-  free (offbuffer);
+  //free (offbuffer);
 }
 
 /*
