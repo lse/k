@@ -28,7 +28,7 @@ CP	= cp
 MCOPY	= mcopy
 MKFS	= mkfs
 MMD	= mmd
-QEMU	= qemu
+QEMU	= qemu-system-i386
 RM	= rm -f
 
 MKDIR	= mkdir
