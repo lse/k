@@ -275,6 +275,7 @@ kfs_write_inode (FILE *out, FILE *fp, struct kfs_inode *inode,
       iblock_idx.cksum = kfs_checksum (&iblock_idx,
           sizeof (struct kfs_i_block_index) - sizeof (iblock_idx.cksum));
       kfswrite (&iblock_idx, sizeof (struct kfs_i_block_index), 1, out);
+      fseek (out, blk_idx * KFS_BLK_SZ, SEEK_SET);
     }
     inode->i_blk_cnt = i;
     if (!feof (fp)) {
