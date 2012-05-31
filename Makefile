@@ -32,7 +32,7 @@ SUBDIRS		= $(K_PATH) $(ROMS_PATH) $(SDK_PATH)
 K		= $(K_PATH)/k
 ROM		= $(ROMS_PATH)/rom
 
-GAME		?= KGameBoy
+GAME		?= skate
 
 FLOPPY		= k_floppy
 USBSTICK	= k_usbstick
@@ -64,7 +64,7 @@ distclean:
 	$(RM) $(FLOPPY) $(USBSTICK)
 
 boot: floppy
-	$(QEMU) -fda $(FLOPPY) -soundhw all -net none &
+	$(QEMU) -fda $(FLOPPY) -soundhw all -net none -s -S &
 
 floppy: k rom
 	$(CP) sdk/grub/floppy $(FLOPPY)
