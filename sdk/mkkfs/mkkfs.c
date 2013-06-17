@@ -130,7 +130,7 @@ is_opt (const char *str) {
  */
 static uint32_t
 kfs_checksum (const void *data, size_t sz) {
-  const char *ptr = data;
+  const uint8_t *ptr = data;
   uint32_t a = 1, b = 0;
 
   for (; sz; ++ptr, --sz) {
