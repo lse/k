@@ -23,7 +23,7 @@
 #
 AR	= ar
 CAT	= cat
-CC	= gcc
+CC	= gcc -g3
 CP	= cp
 MCOPY	= mcopy
 MKFS	= mkfs

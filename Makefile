@@ -64,7 +64,7 @@ distclean:
 	$(RM) $(FLOPPY) $(USBSTICK)
 
 boot: floppy
-	$(QEMU) -fda $(FLOPPY) -soundhw all -net none &
+	$(QEMU) -fda $(FLOPPY) -soundhw all -net none -serial pty -monitor pty &
 
 floppy: k rom
 	$(CP) sdk/grub/floppy $(FLOPPY)
