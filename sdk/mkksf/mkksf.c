@@ -23,45 +23,41 @@
 */
 #include <stdio.h>
 
-int		main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-  FILE*		fin = NULL;
-  FILE*		fout = NULL;
-  unsigned int	nb, tone, duration;
-  char*		magic = ".KSF";
+	FILE *fin = NULL;
+	FILE *fout = NULL;
+	unsigned int nb, tone, duration;
+	char *magic = ".KSF";
 
-  if (argc != 3)
-  {
-    fprintf(stderr, "%s", "ksf 1.0\n");
-    fprintf(stderr, "Usage: %s in.txt out.ksf\n", argv[0]);
-    return (1);
-  }
+	if (argc != 3) {
+		fprintf(stderr, "%s", "ksf 1.0\n");
+		fprintf(stderr, "Usage: %s in.txt out.ksf\n", argv[0]);
+		return (1);
+	}
 
-  if (!(fin = fopen(argv[1], "r")) || !(fout = fopen(argv[2], "w")))
-  {
-    perror ("fopen");
-    return (1);
-  }
+	if (!(fin = fopen(argv[1], "r")) || !(fout = fopen(argv[2], "w"))) {
+		perror("fopen");
+		return (1);
+	}
+	// dump magic number
+	fwrite(magic, 4, 1, fout);
+	// reserves four bytes to store number of tones
+	fwrite(&nb, 4, 1, fout);
 
-  // dump magic number
-  fwrite(magic, 4, 1, fout);
-  // reserves four bytes to store number of tones
-  fwrite(&nb, 4, 1, fout);
+	for (nb = 0; !feof(fin); nb++) {
+		fscanf(fin, "%d%d", &tone, &duration);
+		fwrite(&tone, 4, 1, fout);
+		fwrite(&duration, 4, 1, fout);
+	}
 
-  for (nb = 0; !feof(fin); nb++)
-  {
-    fscanf (fin, "%d%d", &tone, &duration);
-    fwrite (&tone, 4, 1, fout);
-    fwrite (&duration, 4, 1, fout);
-  }
+	// seek back to the number of tones
+	fseek(fout, 4, SEEK_SET);
+	// write the new value
+	fwrite(&nb, sizeof(int), 1, fout);
 
-  // seek back to the number of tones
-  fseek(fout, 4, SEEK_SET);
-  // write the new value
-  fwrite(&nb, sizeof (int), 1, fout);
+	fclose(fout);
+	fclose(fin);
 
-  fclose (fout);
-  fclose (fin);
-
-  return (0);
+	return (0);
 }

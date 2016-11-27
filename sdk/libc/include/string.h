@@ -21,25 +21,18 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef ASSERT_H
-# define ASSERT_H
+#ifndef STRING_H_
+#define STRING_H_
 
-# include <stdio.h>
+#include <stddef.h>
 
-# ifndef NDEBUG
-#  define assert(exp)							\
-     do									\
-     {									\
-       if (!(exp))							\
-       {								\
-         printf("%s, %d: assertion '%s' failed\n",			\
-		__BASE_FILE__, __LINE__, exp);				\
-         printf("System halted.\n");					\
-         while (1)							\
-	   continue;							\
-       }								\
-     }									\
-     while (0)
-#endif
+int memcmp(const void *s1, const void *s2, size_t n);
+void *memcpy(void *dest, const void *src, size_t n);
+void *memset(void *s, int c, size_t n);
+int strcmp(const char *s1, const char *s2);
+char *strcpy(char *dest, const char *src);
+char *strdup(const char *s);
+size_t strlen(const char *s);
+int strncmp(const char *s1, const char *s2, size_t n);
 
-#endif /* !ASSERT_H */
+#endif				/* !STRING_H_ */

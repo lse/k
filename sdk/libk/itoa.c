@@ -21,15 +21,43 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef SOUND_H
-# define SOUND_H
+#include <stdlib.h>
+#include <string.h>
 
-# include <kstd.h>
-# include <stddef.h>
-# include <string.h>
+static int conv(unsigned int n, char dig[])
+{
+	int i = 0;
 
-t_melody*	load_sound(const char* path);
+	while (n) {
+		dig[i] = n % 10 + '0';
+		++i;
+		n /= 10;
+	}
+	return i - 1;
+}
 
-void		clear_sound(t_melody* melody);
+char *itoa(int nb, int base)
+{
+	char buff[50];
+	char *res;
+	int i = 0;
+	int j;
+	int dec = 0;
 
-#endif /* !SOUND_H_ */
+	(void)base;
+
+	if (!nb)
+		buff[0] = '0';
+	else if (nb < 0) {
+		dec = 1;
+		i = conv(-nb, buff);
+	} else
+		i = conv(nb, buff);
+	res = malloc(i * sizeof(char) + 1);
+	if (dec)
+		res[0] = '-';
+	for (j = 0; j <= i; ++j)
+		res[dec + j] = buff[i - j];
+	res[dec + i * sizeof(char) + 1] = 0;
+	return res;
+}

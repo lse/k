@@ -21,24 +21,12 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef STDARG_H_
-# define STDARG_H_
+#ifndef STDIO_H_
+#define STDIO_H_
 
-# include <stddef.h>
+#include <stdarg.h>
 
-typedef void* va_list;
+int printf(const char *format, ...);
+int vprintf(const char *format, va_list args);
 
-#define	ALIGN(type)							\
-  (sizeof(type) +							\
-   (sizeof(size_t) - (sizeof(type) % sizeof(size_t))) % sizeof(size_t))
-
-#define	va_start(ap, lastarg)				\
-  (ap = (char*) &(lastarg) + ALIGN(lastarg))
-
-#define	va_arg(ap, type)				\
-  (ap += ALIGN(type), *((type*) (ap - ALIGN(type))))
-
-#define	va_end(ap)					\
-  ;
-
-#endif /* !STDARG_H_ */
+#endif				/* !STDLIB_H_ */

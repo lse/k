@@ -24,59 +24,61 @@
 #ifndef SKATE_H_
 #define SKATE_H_
 
-#include <libk.h>
+#include <graphic.h>
+#include <sound.h>
+#include <stdlib.h>
 
 enum e_gfx {
-  TRICK_NONE = 0,
-  TRICK_RUN,
-  TRICK_FLIP,
-  TRICK_UP,
-  TRICK_SLIDE,
-  TRICK_CRASH,
-  TRICK_ROTATE,
-  BOX_UP,
-  BOX,
-  BOX_RAIL,
-  NO_BOX
+	TRICK_NONE = 0,
+	TRICK_RUN,
+	TRICK_FLIP,
+	TRICK_UP,
+	TRICK_SLIDE,
+	TRICK_CRASH,
+	TRICK_ROTATE,
+	BOX_UP,
+	BOX,
+	BOX_RAIL,
+	NO_BOX
 };
 
 typedef struct {
-  int		size;
-  enum e_box	*park;
-  unsigned long	timeout;
-}		t_skatepark;
+	int size;
+	enum e_box *park;
+	unsigned long timeout;
+} t_skatepark;
 
 typedef struct {
-  int		x;
-  int		y;
-  int		height;
-  int		width;
-  int		fly;
-  int		jump;
-  int		trick_delay;
-  unsigned int	trick;
-  int		slide;
-  int		rotation;
-  int		combo;
-  int		current_box;
-}		t_skater;
+	int x;
+	int y;
+	int height;
+	int width;
+	int fly;
+	int jump;
+	int trick_delay;
+	unsigned int trick;
+	int slide;
+	int rotation;
+	int combo;
+	int current_box;
+} t_skater;
 
 typedef struct {
-  unsigned long timer1;
-  unsigned long timer2;
-  int           freq;
-  int           step;
-  int		x;
-  int		current_box;
-  int           width;
-}               t_scrolling;
+	unsigned long timer1;
+	unsigned long timer2;
+	int freq;
+	int step;
+	int x;
+	int current_box;
+	int width;
+} t_scrolling;
 
 typedef struct {
-  enum e_gfx	id;
-  int		delay;
-  char		*filename;
-  void		*gfx;
-}		t_gfx;
+	enum e_gfx id;
+	int delay;
+	char *filename;
+	void *gfx;
+} t_gfx;
 
 #define BG_COLOR	BLACK
 #define BOX_WIDTH	40
@@ -84,40 +86,32 @@ typedef struct {
 #define PARK_SIZE	100
 #define SPEED		2
 
-extern enum e_gfx	park[PARK_SIZE];
-extern t_scrolling	scrolling;
-extern unsigned long	jiffies;
-extern t_skater		skater;
-extern int		score;
-extern int		score_tmp;
-extern t_gfx		graphics[];
-extern char		*trick[];
+extern enum e_gfx park[PARK_SIZE];
+extern t_scrolling scrolling;
+extern unsigned long jiffies;
+extern t_skater skater;
+extern int score;
+extern int score_tmp;
+extern t_gfx graphics[];
+extern char *trick[];
 
-int		scroll_slowdown(void);
-int		scroll_speedup(void);
-void		scroll(void);
+int scroll_slowdown(void);
+int scroll_speedup(void);
+void scroll(void);
 
-void		park_init(void);
-void		park_draw(void);
-int		box_height(int			box,
-			   int			shift);
-int		get_box(int			x);
-int		get_shift(int			x);
+void park_init(void);
+void park_draw(void);
+int box_height(int box, int shift);
+int get_box(int x);
+int get_shift(int x);
 
-void		skater_init(void);
-void		skater_draw(void);
-void		skater_jump(int			height);
-void		skater_flip(void);
-void		skater_rotate(void);
-void		skater_slide(void);
+void skater_init(void);
+void skater_draw(void);
+void skater_jump(int height);
+void skater_flip(void);
+void skater_rotate(void);
+void skater_slide(void);
 
-t_anim          *load_anim(char                 *paths,
-                           int                  delay);
+void gfx_init(void);
 
-void            draw_anim(t_anim                *anim,
-                          int                   x,
-                          int                   y,
-                          unsigned long		time);
-void		gfx_init(void);
-
-#endif /* !SKATE_H_ */
+#endif				/* !SKATE_H_ */

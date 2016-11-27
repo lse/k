@@ -23,57 +23,20 @@
 #
 include config.mk
 
-K_PATH		= ./k
-ROMS_PATH	= ./roms
-SDK_PATH	= ./sdk
+SUBDIRS		= k roms sdk/libc sdk/libk sdk/mkkfs
 
-SUBDIRS		= $(K_PATH) $(ROMS_PATH) $(SDK_PATH)
+.PHONY: $(SUBDIRS)
 
-K		= $(K_PATH)/k
-ROM		= $(ROMS_PATH)/rom
+all: k roms
 
-GAME		?= skate
+k: sdk/libc
+roms: sdk/mkkfs sdk/libc sdk/libk
 
-FLOPPY		= k_floppy
-USBSTICK	= k_usbstick
-
-.PHONY: k sdk rom
-
-all: k
-
-sdk:
-	$(MAKE) -C $(SDK_PATH)
-
-k: sdk
-	$(MAKE) -C $(K_PATH)
-
-rom: sdk
-	$(MAKE) -C $(ROMS_PATH) GAME=$(GAME)
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 clean:
 	for I in $(SUBDIRS);			\
 	do					\
 		$(MAKE) -C $$I $@ || exit 1;	\
 	done
-
-distclean:
-	for I in $(SUBDIRS);			\
-	do					\
-		$(MAKE) -C $$I $@ || exit 1;	\
-	done
-	$(RM) $(FLOPPY) $(USBSTICK)
-
-boot: floppy
-	$(QEMU) -fda $(FLOPPY) -soundhw all -net none -serial pty -monitor pty &
-
-floppy: k rom
-	$(CP) sdk/grub/floppy $(FLOPPY)
-	$(MCOPY) -i $(FLOPPY) $(K) ::/modules/k
-	$(MCOPY) -i $(FLOPPY) $(ROM) ::/modules/rom
-
-usbstick: k rom
-	$(CP) sdk/grub/usbstick $(USBSTICK)
-	$(MOUNT) -o loop $(USBSTICK) $(MNT)
-	$(CP) $(K) $(MNT)/modules/k
-	$(CP) $(ROM) $(MNT)/modules/rom
-	$(UMOUNT) $(MNT)

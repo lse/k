@@ -21,89 +21,15 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef SOUND_H
+#define SOUND_H
+
+#include <k/kstd.h>
+#include <stddef.h>
 #include <string.h>
 
-int	memcmp(const void* s1, const void* s2, size_t n)
-{
-  const char* d1 = s1;
-  const char* d2 = s2;
+struct melody *load_sound(const char *path);
 
-  for (; *d1 == *d2 && n > 0; d1++, d2++, n--)
-    continue;
+void clear_sound(struct melody *melody);
 
-  return (n);
-}
-
-void*	memcpy(void* dest, const void* src, size_t n)
-{
-  const char* s = src;
-  char*	d = dest;
-
-  for (; n > 0; n--, d++, s++)
-    *d = *s;
-
-  return (dest);
-}
-
-void*	memset(void* s, int c, size_t n)
-{
-  unsigned char* p = NULL;
-
-  for (p = s; n > 0; n--, p++)
-    *p = c;
-
-  return (s);
-}
-
-int	strcmp(const char* s1, const char* s2)
-{
-  for (; *s1 == *s2 && *s1 != '\0'; s1++, s2++)
-    continue;
-
-  return (*s1 - *s2);
-}
-
-char*	strcpy(char* dest, const char* src)
-{
-  char*	p = NULL;
-
-  for (p = dest; *src != '\0'; p++, src++)
-    *p = *src;
-
-  *p = '\0';
-
-  return (dest);
-}
-
-char*	strdup(const char* s)
-{
-  char*	r = NULL;
-  char*	p = NULL;
-
-  r = malloc(strlen(s) + 1);
-
-  for (p = r; *s != '\0'; s++, p++)
-    *p = *s;
-
-  *p = '\0';
-
-  return (r);
-}
-
-size_t	strlen(const char* s)
-{
-  const char* p = NULL;
-
-  for (p = s; *p != '\0'; p++)
-    continue;
-
-  return (p - s);
-}
-
-int	strncmp(const char* s1, const char* s2, size_t n)
-{
-  for (; *s1 == *s2 && *s1 != '\0' && n > 0; s1++, s2++, n--)
-    continue;
-
-  return (n);
-}
+#endif				/* !SOUND_H_ */

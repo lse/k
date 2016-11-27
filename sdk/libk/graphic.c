@@ -21,7 +21,8 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "libk.h"
+#include <graphic.h>
+#include <stdlib.h>
 
 /* this file should really be cleaned :) */
 
@@ -29,20 +30,19 @@
  * framebuffer pointer.
  */
 
-unsigned char* framebuffer = NULL;
+unsigned char *framebuffer = NULL;
 
 /*
  * offscreen buffer (for double buffering).
  */
 
-static unsigned char* offbuffer = NULL;
+static unsigned char *offbuffer = NULL;
 
 /*
  * the font is composed of 8*8 characters.
  */
 
-static unsigned char font[2048] =
-{
+static unsigned char font[2048] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x7E, 0x81, 0xA5, 0x81, 0xBD, 0x99, 0x81, 0x7E,
 	0x7E, 0xFF, 0xDB, 0xFF, 0xC3, 0xE7, 0xFF, 0x7E,
@@ -305,31 +305,31 @@ static unsigned char font[2048] =
  * this function switches to graphic mode.
  */
 
-void			switch_graphic(void)
+void switch_graphic(void)
 {
-  if (setvideo(VIDEO_GRAPHIC))
-    blue_screen ("Unable to switch to graphic mode");
-  offbuffer = malloc (FB_SIZE);
+	if (setvideo(VIDEO_GRAPHIC))
+		blue_screen("Unable to switch to graphic mode");
+	offbuffer = malloc(FB_SIZE);
 }
 
 /*
  * this function get back to text mode.
  */
 
-void			switch_text(void)
+void switch_text(void)
 {
-  if (setvideo(VIDEO_TEXT))
-    blue_screen ("Unable to switch to text mode");
-  //free (offbuffer);
+	if (setvideo(VIDEO_TEXT))
+		blue_screen("Unable to switch to text mode");
+	//free (offbuffer);
 }
 
 /*
  * call this function at the beginning of drawing a frame.
  */
 
-void			draw_begin(void)
+void draw_begin(void)
 {
-    draw_clear(CONS_BLACK);
+	draw_clear(CONS_BLACK);
 }
 
 /*
@@ -337,172 +337,155 @@ void			draw_begin(void)
  * copy your buffered draw from off-screen buffer to framebuffer.
  */
 
-void			draw_end(void)
+void draw_end(void)
 {
-  swap_frontbuffer(offbuffer);
-  /*memcpy (framebuffer, offbuffer, FB_SIZE);*/
+	swap_frontbuffer(offbuffer);
+	/*memcpy (framebuffer, offbuffer, FB_SIZE); */
 }
 
 /*
  * clears the screen with given color.
  */
 
-void			draw_clear(t_color color)
+void draw_clear(t_color color)
 {
-  memset (offbuffer, color, FB_SIZE);
+	memset(offbuffer, color, FB_SIZE);
 }
 
 /*
  * this function plot a pixel of given color at given position.
  */
 
-inline void		draw_pixel(unsigned int x, unsigned int y,
-				   t_color color)
+void draw_pixel(unsigned int x, unsigned int y, t_color color)
 {
-  if (x >= GRAPHIC_WIDTH)
-    return;
-  if (y >= GRAPHIC_HEIGHT)
-    return;
+	if (x >= GRAPHIC_WIDTH)
+		return;
+	if (y >= GRAPHIC_HEIGHT)
+		return;
 
-  offbuffer[y * GRAPHIC_WIDTH + x] = color;
+	offbuffer[y * GRAPHIC_WIDTH + x] = color;
 }
 
 /*
  * draw a line.
  */
 
-int			abs(int a)
+int abs(int a)
 {
-  if (a < 0)
-    return -a;
-  else
-    return a;
+	if (a < 0)
+		return -a;
+	else
+		return a;
 }
 
-void			draw_line(unsigned int x1, unsigned int y1,
-				  unsigned int x2, unsigned int y2,
-				  t_color color)
+void draw_line(unsigned int x1, unsigned int y1,
+	       unsigned int x2, unsigned int y2, t_color color)
 {
-  unsigned int	i;
+	unsigned int i;
 
-  if (x1 >= GRAPHIC_WIDTH)
-    return;
-  if (y1 >= GRAPHIC_HEIGHT)
-    return;
-  if (x2 >= GRAPHIC_WIDTH)
-    return;
-  if (y2 >= GRAPHIC_HEIGHT)
-    return;
+	if (x1 >= GRAPHIC_WIDTH)
+		return;
+	if (y1 >= GRAPHIC_HEIGHT)
+		return;
+	if (x2 >= GRAPHIC_WIDTH)
+		return;
+	if (y2 >= GRAPHIC_HEIGHT)
+		return;
 
-  if (x1 == x2)
-    {
-      for (i = y1; i < y2; i++)
-	draw_pixel (x1, i, color);
-    }
-  else if (y1 == y2)
-    {
-      for (i = x1; i < x2; i++)
-	draw_pixel (i, y1, color);
-    }
-  else
-    {
-      int s;
-      int steep =  abs(y2 - y1) > abs(x2 - x1);
-      if (steep)
-	{
-	  s = x1;
-	  x1 = y1;
-	  y1 = s;
-	  s = x2;
-	  x2 = y2;
-	  y2 = s;
+	if (x1 == x2) {
+		for (i = y1; i < y2; i++)
+			draw_pixel(x1, i, color);
+	} else if (y1 == y2) {
+		for (i = x1; i < x2; i++)
+			draw_pixel(i, y1, color);
+	} else {
+		int s;
+		int steep = abs(y2 - y1) > abs(x2 - x1);
+		if (steep) {
+			s = x1;
+			x1 = y1;
+			y1 = s;
+			s = x2;
+			x2 = y2;
+			y2 = s;
+		}
+		if (x1 > x2) {
+			s = x1;
+			x1 = x2;
+			x2 = s;
+			s = y2;
+			y2 = y1;
+			y1 = s;
+		}
+		int deltax = x2 - x1;
+		int deltay = abs(y2 - y1);
+		int error = -deltax / 2;
+		int ystep;
+		int y = y1;
+
+		if (y1 < y2)
+			ystep = 1;
+		else
+			ystep = -1;
+		unsigned int x;
+		for (x = x1; x < x2; x++) {
+			if (steep)
+				draw_pixel(y, x, color);
+			else
+				draw_pixel(x, y, color);
+
+			error = error + deltay;
+
+			if (error > 0) {
+				y = y + ystep;
+				error = error - deltax;
+			}
+		}
 	}
-      if (x1 > x2)
-	{
-	  s = x1;
-	  x1 = x2;
-	  x2 = s;
-	  s = y2;
-	  y2 = y1;
-	  y1 = s;
-	}
-      int deltax = x2 - x1;
-      int deltay = abs(y2 - y1);
-      int error = -deltax / 2;
-      int ystep;
-      int y = y1;
-
-      if (y1 < y2)
-	ystep = 1;
-      else
-	ystep = -1;
-      unsigned int x;
-      for (x = x1; x < x2; x++)
-	{
-	  if (steep)
-	    draw_pixel (y, x, color);
-	  else
-            draw_pixel (x, y, color);
-
-	  error = error + deltay;
-
-	  if (error > 0)
-	    {
-	      y = y + ystep;
-	      error = error - deltax;
-	    }
-	}
-    }
 }
 
 /*
  * draw an empty rectangle.
  */
 
-void			draw_rect(unsigned int x1, unsigned int y1,
-				  unsigned int x2, unsigned int y2,
-				  t_color color)
+void draw_rect(unsigned int x1, unsigned int y1,
+	       unsigned int x2, unsigned int y2, t_color color)
 {
-  unsigned int	x;
-  unsigned int	y;
+	unsigned int x;
+	unsigned int y;
 
-  for (x = x1; x < x2 && x < GRAPHIC_WIDTH; x++)
-    {
-      draw_pixel (x, y1, color);
-      draw_pixel (x, y2, color);
-    }
-  for (y = y1; y < y2 && y < GRAPHIC_HEIGHT; y++)
-    {
-      draw_pixel (x1, y, color);
-      draw_pixel (x2, y, color);
-    }
+	for (x = x1; x < x2 && x < GRAPHIC_WIDTH; x++) {
+		draw_pixel(x, y1, color);
+		draw_pixel(x, y2, color);
+	}
+	for (y = y1; y < y2 && y < GRAPHIC_HEIGHT; y++) {
+		draw_pixel(x1, y, color);
+		draw_pixel(x2, y, color);
+	}
 }
 
 /*
  * draw a solid rectangle.
  */
 
-void			draw_fillrect(unsigned int x1, unsigned int y1,
-				      unsigned int x2, unsigned int y2,
-				      t_color color,
-				      t_color interior)
+void draw_fillrect(unsigned int x1, unsigned int y1,
+		   unsigned int x2, unsigned int y2,
+		   t_color color, t_color interior)
 {
-  unsigned int	x;
-  unsigned int	y;
+	unsigned int x;
+	unsigned int y;
 
-  for (x = x1; x < x2 && x < GRAPHIC_WIDTH; x++)
-    {
-      draw_pixel (x, y1, color);
-      draw_pixel (x, y2, color);
-    }
-  for (y = y1; y <= y2 && y < GRAPHIC_HEIGHT; y++)
-    {
-      draw_pixel (x1, y, color);
-      draw_pixel (x2, y, color);
-    }
-  for (x = x1 + 1; x < x2 && x < GRAPHIC_WIDTH; x++)
-    for (y = y1 + 1; y < y2 && y < GRAPHIC_HEIGHT; y++)
-      draw_pixel (x, y, interior);
+	for (x = x1; x < x2 && x < GRAPHIC_WIDTH; x++) {
+		draw_pixel(x, y1, color);
+		draw_pixel(x, y2, color);
+	}
+	for (y = y1; y <= y2 && y < GRAPHIC_HEIGHT; y++) {
+		draw_pixel(x1, y, color);
+		draw_pixel(x2, y, color);
+	}
+	for (x = x1 + 1; x < x2 && x < GRAPHIC_WIDTH; x++)
+		for (y = y1 + 1; y < y2 && y < GRAPHIC_HEIGHT; y++)
+			draw_pixel(x, y, interior);
 }
 
 /*
@@ -511,121 +494,113 @@ void			draw_fillrect(unsigned int x1, unsigned int y1,
  * the only supported palette is the default one (obtained with Paint).
  */
 
-t_image*		load_image(const char* path)
+t_image *load_image(const char *path)
 {
-  t_bitmap_header	bmp;
-  t_image*		img;
-  int			fd;
-  unsigned int		i;
-  unsigned int		j;
-  int			ppl;
+	t_bitmap_header bmp;
+	t_image *img;
+	int fd;
+	unsigned int i;
+	unsigned int j;
+	int ppl;
 
-  if ((fd = open (path, 0)) < 0)
-    return NULL;
+	if ((fd = open(path, 0)) < 0)
+		return NULL;
 
-  /*
-   * read the BMP header and extract data.
-   */
+	/*
+	 * read the BMP header and extract data.
+	 */
 
-  if (read (fd, &bmp, sizeof(t_bitmap_header)) != sizeof(t_bitmap_header) ||
-      bmp.signature[0] != 'B' || bmp.signature[1] != 'M' ||
-      !(img = malloc (sizeof (t_image))))
-    {
-      close (fd);
-      return NULL;
-    }
-  img->width = bmp.width;
-  img->height = bmp.height;
-
-  /*
-   * build the image.
-   */
-
-  if (!(img->data = malloc (img->height * sizeof (unsigned char*))))
-    {
-      free (img);
-      close (fd);
-      return NULL;
-    }
-  for (i = 0; i < img->height; i++)
-    if (!(img->data[i] = malloc (img->width)))
-      {
-	for (j = 0; j < i; j++)
-	  free (img->data[j]);
-	free (img->data);
-	free (img);
-	close (fd);
-	return NULL;
-      }
-  ppl = (bmp.size - (img->width * img->height)) / img->height;
-  if (seek (fd, bmp.offset, SEEK_SET) == (off_t)-1)
-    {
-      clear_image (img);
-      close (fd);
-      return NULL;
-    }
-  for (i = 0; i < img->height; i++)
-    {
-      if (read (fd, img->data[i], img->width) != (int)img->width ||
-	  seek (fd, ppl, SEEK_CUR) == (off_t)-1)
-	{
-	  clear_image (img);
-	  close (fd);
-	  return NULL;
+	if (read(fd, &bmp, sizeof(t_bitmap_header)) != sizeof(t_bitmap_header)
+	    || bmp.signature[0] != 'B' || bmp.signature[1] != 'M'
+	    || !(img = malloc(sizeof(t_image)))) {
+		close(fd);
+		return NULL;
 	}
-    }
-  close (fd);
-  return img;
+	img->width = bmp.width;
+	img->height = bmp.height;
+
+	/*
+	 * build the image.
+	 */
+
+	if (!(img->data = malloc(img->height * sizeof(unsigned char *)))) {
+		free(img);
+		close(fd);
+		return NULL;
+	}
+	for (i = 0; i < img->height; i++)
+		if (!(img->data[i] = malloc(img->width))) {
+			for (j = 0; j < i; j++)
+				free(img->data[j]);
+			free(img->data);
+			free(img);
+			close(fd);
+			return NULL;
+		}
+	ppl = (bmp.size - (img->width * img->height)) / img->height;
+	if (seek(fd, bmp.offset, SEEK_SET) == (off_t) - 1) {
+		clear_image(img);
+		close(fd);
+		return NULL;
+	}
+	for (i = 0; i < img->height; i++) {
+		if (read(fd, img->data[i], img->width) != (int)img->width ||
+		    seek(fd, ppl, SEEK_CUR) == (off_t) - 1) {
+			clear_image(img);
+			close(fd);
+			return NULL;
+		}
+	}
+	close(fd);
+	return img;
 }
 
 /*
  * destroy a loaded image.
  */
 
-void			clear_image(t_image* image)
+void clear_image(t_image * image)
 {
-  unsigned int	i;
+	unsigned int i;
 
-  for (i = 0; i < image->height; i++)
-    free (image->data[i]);
-  free (image->data);
-  free (image);
+	for (i = 0; i < image->height; i++)
+		free(image->data[i]);
+	free(image->data);
+	free(image);
 }
 
 /*
  * display a loaded image with transparency.
  */
 
-void			draw_image_alpha(t_image*	image,
-					 unsigned int	x,
-					 unsigned int	y,
-					 unsigned int	alpha)
+void draw_image_alpha(t_image * image,
+		      unsigned int x, unsigned int y, unsigned int alpha)
 {
-  unsigned int	i;
-  unsigned int	j;
+	unsigned int i;
+	unsigned int j;
 
-  for (i = 0; i < image->height; i++)
-    for (j = 0; j < image->width; j++)
-      {
-	if ((alpha == (unsigned int) -1) || (alpha != image->data[i][j]))
-	    draw_pixel(x + j, y + image->height - i, image->data[i][j]);
+	for (i = 0; i < image->height; i++)
+		for (j = 0; j < image->width; j++) {
+			if ((alpha == (unsigned int)-1)
+			    || (alpha != image->data[i][j]))
+				draw_pixel(x + j, y + image->height - i,
+					   image->data[i][j]);
 
-	//if (image->data[i][j] != alpha)
-	  //	if ((x + j) < GRAPHIC_WIDTH)
-	  //if ((y + i) < GRAPHIC_HEIGHT)
-	      //offbuffer[(y + (image->height - i - 1)) * GRAPHIC_WIDTH + x + j] =
-		//      image->data[i][j];
-      }
+			//if (image->data[i][j] != alpha)
+			//    if ((x + j) < GRAPHIC_WIDTH)
+			//if ((y + i) < GRAPHIC_HEIGHT)
+			//offbuffer[(y + (image->height - i - 1)) * GRAPHIC_WIDTH + x + j] =
+			//      image->data[i][j];
+		}
 }
 
 /*
  * display a loaded image.
  */
 
-void			draw_image(t_image* image,
-				   unsigned int x, unsigned int y)
+void draw_image(t_image * image, unsigned int x, unsigned int y)
 {
-  draw_image_alpha(image, x, y, -1);
+	draw_image_alpha(image, x, y, -1);
 }
 
 /*
@@ -634,44 +609,41 @@ void			draw_image(t_image* image,
 
 static int bit_on(char c, int n)
 {
-  int	mask;
+	int mask;
 
-  mask = 1 << (7 - n);
-  return c & mask;
+	mask = 1 << (7 - n);
+	return c & mask;
 }
 
 /*
  * draw some text.
  */
 
-void			draw_text(const char* s,
-				  unsigned int x, unsigned int y,
-				  t_color fg, t_color bg)
+void draw_text(const char *s,
+	       unsigned int x, unsigned int y, t_color fg, t_color bg)
 {
-  char		c;
-  char		ch;
-  char		p;
-  unsigned int	i;
-  unsigned int	j;
-  unsigned int	pos;
-  unsigned int	strp = 0;
+	char c;
+	char ch;
+	char p;
+	unsigned int i;
+	unsigned int j;
+	unsigned int pos;
+	unsigned int strp = 0;
 
-  for (; *s; s++, strp++)
-    {
-      c = *s;
+	for (; *s; s++, strp++) {
+		c = *s;
 
-      for (i = 0; i < 8; ++i)
-	for (j = 0; j < 8; ++j)
-	  {
-	    ch = font[c * 8 + i];
-	    p = bit_on(ch, j) ? fg : bg;
+		for (i = 0; i < 8; ++i)
+			for (j = 0; j < 8; ++j) {
+				ch = font[c * 8 + i];
+				p = bit_on(ch, j) ? fg : bg;
 
-	    pos = ((y + i) * GRAPHIC_WIDTH) +
-	      (strp * 8 + x) + j;
-	    if (!((bg == (unsigned int) -1) && (p == -1)))
-	      offbuffer[pos] = p;
-	  }
-    }
+				pos = ((y + i) * GRAPHIC_WIDTH) +
+				    (strp * 8 + x) + j;
+				if (!((bg == (unsigned int)-1) && (p == -1)))
+					offbuffer[pos] = p;
+			}
+	}
 }
 
 /*
@@ -683,52 +655,49 @@ void			draw_text(const char* s,
  * invocation example: load_anim("pic1 pic2 pic3 pic4 pic5", PIC_ANIM_DELAY);
  */
 
-t_anim		*load_anim(char			*paths,
-			   int			delay)
+t_anim *load_anim(char *paths, int delay)
 {
-  char		*p;
-  char		*filename;
-  t_anim	*anim = NULL;
-  int		i;
+	char *p;
+	char *filename;
+	t_anim *anim = NULL;
+	int i;
 
-  if (!paths || !*paths)
-    return NULL;
+	if (!paths || !*paths)
+		return NULL;
 
-  if (!(anim = malloc(sizeof (t_anim))))
-    return NULL;
+	if (!(anim = malloc(sizeof(t_anim))))
+		return NULL;
 
-  anim->nr_img = 1;
-  anim->current_img = 0;
-  anim->delay = delay;
-  anim->jiffies = 0;
+	anim->nr_img = 1;
+	anim->current_img = 0;
+	anim->delay = delay;
+	anim->jiffies = 0;
 
-  for (p = paths; *p; p++)
-    if (*p == ' ')
-      anim->nr_img++;
+	for (p = paths; *p; p++)
+		if (*p == ' ')
+			anim->nr_img++;
 
-  if (!(anim->imgs = malloc (anim->nr_img * sizeof (t_image))))
-    {
-      free(anim);
-      return NULL;
-    }
+	if (!(anim->imgs = malloc(anim->nr_img * sizeof(t_image)))) {
+		free(anim);
+		return NULL;
+	}
 
-  p = strdup(paths);
+	p = strdup(paths);
 
-  for (i = 0; i < anim->nr_img; i++)
-    {
-      filename = p;
+	for (i = 0; i < anim->nr_img; i++) {
+		filename = p;
 
-      while (*p && *p != ' ')
-	p++;
+		while (*p && *p != ' ')
+			p++;
 
-      *p = '\0';
-      p++;
+		*p = '\0';
+		p++;
 
-      if (!(anim->imgs[i] = load_image(filename)))
-	blue_screen("failed to load skater image");
-    }
+		if (!(anim->imgs[i] = load_image(filename)))
+			blue_screen("failed to load skater image");
+	}
 
-  return anim;
+	return anim;
 }
 
 /*
@@ -738,101 +707,96 @@ t_anim		*load_anim(char			*paths,
  * be incremented at every timer tick.
  */
 
-void		draw_anim(t_anim		*anim,
-			  int			x,
-			  int			y,
-			  unsigned long		jiffies)
+void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies)
 {
-  if (anim->jiffies + anim->delay <= jiffies || anim->jiffies > jiffies)
-    {
-      anim->jiffies = jiffies;
-      anim->current_img = (anim->current_img + 1) % anim->nr_img;
-    }
+	if (anim->jiffies + anim->delay <= jiffies || anim->jiffies > jiffies) {
+		anim->jiffies = jiffies;
+		anim->current_img = (anim->current_img + 1) % anim->nr_img;
+	}
 
-  draw_image_alpha(anim->imgs[anim->current_img], x, y, 0);
+	draw_image_alpha(anim->imgs[anim->current_img], x, y, 0);
 }
 
-
-
 ////////////////////
-extern unsigned char* framebuffer;
+extern unsigned char *framebuffer;
 
 /*
  * console blue screen.
  */
 
-static void	blue_screen_cons(const char* message)
+static void blue_screen_cons(const char *message)
 {
-  char		seq[] = { CONS_ESCAPE, CONS_COLOR,
-			  CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) |
-			  CONS_LIGHT,
-			  CONS_ESCAPE, CONS_CLEAR };
-  char		fatal[] = { CONS_ESCAPE, CONS_SETX, 32,
-			    CONS_ESCAPE, CONS_SETY, 10,
-			    CONS_ESCAPE, CONS_COLOR,
-			    CONS_BACK(CONS_WHITE) | CONS_FRONT(CONS_BLUE) };
-  char		msg[] = { CONS_ESCAPE, CONS_SETX, 0,
-			  CONS_ESCAPE, CONS_SETY, 13,
-			  CONS_ESCAPE, CONS_COLOR,
-			  CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) |
-                          CONS_LIGHT };
-  char*		chiche1 = "If this is not the first time you encounter";
-  char*		chiche2 = "this problem, please contact chiche@epita.fr";
+	char seq[] = { CONS_ESCAPE, CONS_COLOR,
+		CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) | CONS_LIGHT,
+		CONS_ESCAPE, CONS_CLEAR
+	};
+	char fatal[] = { CONS_ESCAPE, CONS_SETX, 32,
+		CONS_ESCAPE, CONS_SETY, 10,
+		CONS_ESCAPE, CONS_COLOR,
+		CONS_BACK(CONS_WHITE) | CONS_FRONT(CONS_BLUE)
+	};
+	char msg[] = { CONS_ESCAPE, CONS_SETX, 0,
+		CONS_ESCAPE, CONS_SETY, 13,
+		CONS_ESCAPE, CONS_COLOR,
+		CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) | CONS_LIGHT
+	};
+	char *chiche1 = "If this is not the first time you encounter";
+	char *chiche2 = "this problem, please contact chiche@epita.fr";
 
-  write (seq, sizeof (seq) / sizeof (char));
+	write(seq, sizeof(seq) / sizeof(char));
 
-  write (fatal, sizeof (fatal) / sizeof (char));
-  printf ("K -- FATAL ERROR", fatal);
+	write(fatal, sizeof(fatal) / sizeof(char));
+	printf("K -- FATAL ERROR", fatal);
 
-  msg[2] = 40 - strlen (message) / 2;
-  write (msg, sizeof (msg) / sizeof (char));
-  printf ("%s", message);
-  msg[2] = 40 - strlen (chiche1) / 2;
-  msg[5] += 2;
-  write (msg, sizeof (msg) / sizeof (char));
-  printf ("%s", chiche1);
-  msg[2] = 40 - strlen (chiche2) / 2;
-  msg[5]++;
-  write (msg, sizeof (msg) / sizeof (char));
-  printf ("%s", chiche2);
+	msg[2] = 40 - strlen(message) / 2;
+	write(msg, sizeof(msg) / sizeof(char));
+	printf("%s", message);
+	msg[2] = 40 - strlen(chiche1) / 2;
+	msg[5] += 2;
+	write(msg, sizeof(msg) / sizeof(char));
+	printf("%s", chiche1);
+	msg[2] = 40 - strlen(chiche2) / 2;
+	msg[5]++;
+	write(msg, sizeof(msg) / sizeof(char));
+	printf("%s", chiche2);
 
-  while (1)
-    ;
+	while (1) ;
 }
 
 /*
  * video blue screen.
  */
 
-static void	blue_screen_fb(const char* message)
+static void blue_screen_fb(const char *message)
 {
-  draw_begin ();
-  draw_clear (CONS_BLUE);
+	draw_begin();
+	draw_clear(CONS_BLUE);
 
-  draw_text ("K -- FATAL ERROR", GRAPHIC_WIDTH / 2 - 8 * 8, 60, CONS_BLUE, CONS_WHITE);
+	draw_text("K -- FATAL ERROR", GRAPHIC_WIDTH / 2 - 8 * 8, 60, CONS_BLUE,
+		  CONS_WHITE);
 
-  draw_text (message, GRAPHIC_WIDTH / 2 - (strlen (message) / 2) * 8, 90,
-	     CONS_WHITE, CONS_BLUE);
+	draw_text(message, GRAPHIC_WIDTH / 2 - (strlen(message) / 2) * 8, 90,
+		  CONS_WHITE, CONS_BLUE);
 
-  draw_text ("If this problem repeats,", GRAPHIC_WIDTH / 2 - 12 * 8, 120,
-	     CONS_WHITE, CONS_BLUE);
-  draw_text ("Please contact chiche@epita.fr", GRAPHIC_WIDTH / 2 - 15 * 8, 130,
-	     CONS_WHITE, CONS_BLUE);
+	draw_text("If this problem repeats,", GRAPHIC_WIDTH / 2 - 12 * 8, 120,
+		  CONS_WHITE, CONS_BLUE);
+	draw_text("Please contact chiche@epita.fr", GRAPHIC_WIDTH / 2 - 15 * 8,
+		  130, CONS_WHITE, CONS_BLUE);
 
-  draw_end ();
+	draw_end();
 
-  while (1)
-    continue;
+	while (1)
+		continue;
 }
 
 /*
  * blue screen !
  */
 
-void		blue_screen(const char* message)
+void blue_screen(const char *message)
 {
-  if (framebuffer)
-    blue_screen_fb(message);
-  else
-    blue_screen_cons(message);
+	if (framebuffer)
+		blue_screen_fb(message);
+	else
+		blue_screen_cons(message);
 }

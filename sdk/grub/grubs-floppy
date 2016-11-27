@@ -1,4 +1,0 @@
-device (fd0) floppy
-root (fd0)
-setup (fd0)
-quit

@@ -1,4 +1,0 @@
-device (fd0) usbstick
-root (fd0)
-setup (fd0)
-quit

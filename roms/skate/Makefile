@@ -21,39 +21,40 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include ../../config.mk
 
-TARGET	  = rom_prog
-OBJS	  = skate.o	\
-	    park.o	\
-	    skater.o	\
-	    gfx.o
-ROM_FILE  = ../rom
+TARGET	  = skate
+OBJS	  = \
+	    gfx.o \
+	    park.o \
+	    skate.o \
+	    skater.o \
+
 ROM_TITLE = "skate"
-ROM_FILES = $(TARGET) boxup.bmp box.bmp rail.bmp skater1.bmp skater2.bmp	\
-	skater3.bmp skater4.bmp skater5.bmp skater6.bmp	skaterup.bmp		\
-	flip1.bmp flip2.bmp flip3.bmp flip4.bmp flip5.bmp slide1.bmp		\
-	slide2.bmp crash.bmp rotate1.bmp rotate2.bmp rotate3.bmp rotate4.bmp	\
-	rotate5.bmp logo.bmp
+ROM_FILES = \
+	    $(TARGET) \
+	    box.bmp \
+	    boxup.bmp \
+	    crash.bmp \
+	    flip1.bmp \
+	    flip2.bmp \
+	    flip3.bmp \
+	    flip4.bmp \
+	    flip5.bmp \
+	    logo.bmp \
+	    rail.bmp \
+	    rotate1.bmp \
+	    rotate2.bmp \
+	    rotate3.bmp \
+	    rotate4.bmp	\
+	    rotate5.bmp \
+	    skater1.bmp \
+	    skater2.bmp	\
+	    skater3.bmp \
+	    skater4.bmp \
+	    skater5.bmp \
+	    skater6.bmp	\
+	    skaterup.bmp \
+	    slide1.bmp \
+	    slide2.bmp \
 
-CFLAGS	+= -I ../../sdk/libk -I ../../sdk/libc
-LDFLAGS	+= -L ../../sdk/libk -L ../../sdk/libc -lk -lc -T ../roms.lds
-
-MKKFS	= ../../sdk/mkkfs/mkkfs
-
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-clean:
-	$(RM) $(OBJS)
-
-distclean: clean
-	$(RM) $(TARGET)
-
-rom: $(TARGET)
-	$(MKKFS) -r $(ROM_FILE) -n $(ROM_TITLE) -f $(ROM_FILES)
+include ../roms.mk
