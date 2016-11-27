@@ -23,24 +23,18 @@
 #
 include ../../config.mk
 
-TARGET	  = mkkfs
-OBJS	  = mkkfs.o
-
-# Removes previous CFLAGS and sets new ones
-CFLAGS	= -Werror -W -Wall -std=c99
-# Removes previous LDFLAGS
-LDFLAGS	=
+TARGET	= mkkfs
+OBJS	= mkkfs.o
+DEPS	= $(OBJS:.o=.d)
 
 all: $(TARGET)
 
+$(TARGET): CPPFLAGS = -MMD
+$(TARGET): CFLAGS = -I../../k/include/ -Wall -Wextra -Werror -std=c99
+$(TARGET): LDFLAGS =
 $(TARGET): $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
-distclean: clean
-	$(RM) $(TARGET)
+-include $(DEPS)

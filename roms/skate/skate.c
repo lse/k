@@ -23,214 +23,208 @@
 */
 #include "skate.h"
 
-unsigned long	jiffies = 0;
-char		*trick[10];
-int		hhh[10];
+unsigned long jiffies = 0;
+char *trick[10];
+int hhh[10];
 
 typedef struct {
-  enum e_gfx	trick;
-  char		*name;
-  int		points;
-  int		duration;
+	enum e_gfx trick;
+	char *name;
+	int points;
+	int duration;
 } t_score;
 
-t_score		tricks[] = {
-  { TRICK_ROTATE, "360", 30, 25 },
-  { TRICK_ROTATE, "720", 30, 25 },
-  { TRICK_FLIP, "flip", 20, 20 },
-  { TRICK_SLIDE, "slide", 1, 1 },
-  { TRICK_NONE, NULL, 0, 0}
+t_score tricks[] = {
+	{TRICK_ROTATE, "360", 30, 25},
+	{TRICK_ROTATE, "720", 30, 25},
+	{TRICK_FLIP, "flip", 20, 20},
+	{TRICK_SLIDE, "slide", 1, 1},
+	{TRICK_NONE, NULL, 0, 0}
 };
 
 /*
  *
  */
 
-static void	draw_trick(void)
+static void draw_trick(void)
 {
-  int		i;
-  int		j;
+	int i;
+	int j;
 
-  for (i = 0; tricks[i].name; i++)
-    if (tricks[i].trick == skater.trick)
-      break;
+	for (i = 0; tricks[i].name; i++)
+		if (tricks[i].trick == skater.trick)
+			break;
 
-  if (tricks[i].trick != TRICK_NONE && tricks[i].trick != TRICK_SLIDE)
-    if (skater.trick_delay == tricks[i].duration - 1)
-      {
-	//	if (skater.rotation < 720)
-	  for (j = 0; j < 9; j++)
-	    {
-	      trick[j] = trick[j + 1];
-	      hhh[j] = hhh[j + 1];
-	    }
+	if (tricks[i].trick != TRICK_NONE && tricks[i].trick != TRICK_SLIDE)
+		if (skater.trick_delay == tricks[i].duration - 1) {
+			//      if (skater.rotation < 720)
+			for (j = 0; j < 9; j++) {
+				trick[j] = trick[j + 1];
+				hhh[j] = hhh[j + 1];
+			}
 
-	trick[9] = tricks[i].name;
-	hhh[9] = skater.y - skater.height - 10;
-	if (hhh[9] <= hhh[8] + 9)
-	  hhh[9] = hhh[8] + 10;
-	
-      }
+			trick[9] = tricks[i].name;
+			hhh[9] = skater.y - skater.height - 10;
+			if (hhh[9] <= hhh[8] + 9)
+				hhh[9] = hhh[8] + 10;
 
-  for (i = 0; i < 10; i++)
-    {
-      if (--hhh[i] <= 20)
-	trick[i] = NULL;
+		}
 
-      if (trick[i])
-	draw_text(trick[i], skater.x + 10, hhh[i], YELLOW, BG_COLOR);
-    }
+	for (i = 0; i < 10; i++) {
+		if (--hhh[i] <= 20)
+			trick[i] = NULL;
+
+		if (trick[i])
+			draw_text(trick[i], skater.x + 10, hhh[i], YELLOW,
+				  BG_COLOR);
+	}
 }
 
 /*
  *
  */
 
-static void	splash_screen()
+static void splash_screen()
 {
-  unsigned long	t;
-  int		blink = 0;
-  t_image	*logo = load_image("/logo.bmp");
+	unsigned long t;
+	int blink = 0;
+	t_image *logo = load_image("/logo.bmp");
 
-  while (getkey() == -1)
-    {
-      draw_clear(BG_COLOR);
+	while (getkey() == -1) {
+		draw_clear(BG_COLOR);
 
-      draw_image(logo, 10, 20);
+		draw_image(logo, 10, 20);
 
-      draw_text("K skater", 200, 40, RED, BG_COLOR);
-      
-      draw_text ("Kernel option - LSE - 2006-2007", 5, 190, BLUE, BG_COLOR);
-      if (blink >= 5)
-        draw_text ("Any key to start", 170, 90, WHITE, 0);
-      draw_end();
+		draw_text("K skater", 200, 40, RED, BG_COLOR);
 
-      blink = (blink + 1) % 10;
-      t = gettick ();
-      while (gettick () - t < 66)
-        ;
-    }
+		draw_text("Kernel option - LSE - 2006-2007", 5, 190, BLUE,
+			  BG_COLOR);
+		if (blink >= 5)
+			draw_text("Any key to start", 170, 90, WHITE, 0);
+		draw_end();
+
+		blink = (blink + 1) % 10;
+		t = gettick();
+		while (gettick() - t < 66) ;
+	}
 }
 
-void		speed(void)
+void speed(void)
 {
-  int		x = 10;
-  int		y = 120;
+	int x = 10;
+	int y = 120;
 
-  if (scrolling.freq < 6)
-    draw_fillrect(x, y - 10, x + 7, y, BLACK, GREEN);
-  if (scrolling.freq < 5)
-    draw_fillrect(x, y - 20, x + 7, y - 10, BLACK, YELLOW);
-  if (scrolling.freq < 4)
-    draw_fillrect(x, y - 30, x + 7, y - 20, BLACK, ORANGE);
-  if (scrolling.freq < 3)
-    draw_fillrect(x, y - 40, x + 7, y - 30, BLACK, RED);
-  if (scrolling.freq < 2)
-    draw_fillrect(x, y - 50, x + 7, y - 40, BLACK, PURPLE);
-  if (scrolling.freq < 1)
-    draw_fillrect(x, y - 60, x + 7, y - 50, BLACK, AQUA);
+	if (scrolling.freq < 6)
+		draw_fillrect(x, y - 10, x + 7, y, BLACK, GREEN);
+	if (scrolling.freq < 5)
+		draw_fillrect(x, y - 20, x + 7, y - 10, BLACK, YELLOW);
+	if (scrolling.freq < 4)
+		draw_fillrect(x, y - 30, x + 7, y - 20, BLACK, ORANGE);
+	if (scrolling.freq < 3)
+		draw_fillrect(x, y - 40, x + 7, y - 30, BLACK, RED);
+	if (scrolling.freq < 2)
+		draw_fillrect(x, y - 50, x + 7, y - 40, BLACK, PURPLE);
+	if (scrolling.freq < 1)
+		draw_fillrect(x, y - 60, x + 7, y - 50, BLACK, AQUA);
 }
 
-void		draw_score(void)
+void draw_score(void)
 {
-  draw_trick();
+	draw_trick();
 
-  //  draw_text("Time: ", 10, 10, PURPLE, BG_COLOR);
-  draw_text(itoa(jiffies / 50, 10), 10, 10, PURPLE, BG_COLOR);
+	//  draw_text("Time: ", 10, 10, PURPLE, BG_COLOR);
+	draw_text(itoa(jiffies / 50, 10), 10, 10, PURPLE, BG_COLOR);
 
-  draw_text("Trick: ", GRAPHIC_WIDTH / 2 - 45, 10, BLUE, BG_COLOR);
-  draw_text(itoa(score_tmp, 10), GRAPHIC_WIDTH / 2 + 5, 10, BLUE, BG_COLOR);
-  if (skater.combo > 1)
-    {
-      draw_text("Combo x", GRAPHIC_WIDTH / 2 - 45, 20, RED, BG_COLOR);
-      draw_text(itoa(skater.combo, 10), GRAPHIC_WIDTH / 2 + 15, 20, RED, BG_COLOR);
-    }
+	draw_text("Trick: ", GRAPHIC_WIDTH / 2 - 45, 10, BLUE, BG_COLOR);
+	draw_text(itoa(score_tmp, 10), GRAPHIC_WIDTH / 2 + 5, 10, BLUE,
+		  BG_COLOR);
+	if (skater.combo > 1) {
+		draw_text("Combo x", GRAPHIC_WIDTH / 2 - 45, 20, RED, BG_COLOR);
+		draw_text(itoa(skater.combo, 10), GRAPHIC_WIDTH / 2 + 15, 20,
+			  RED, BG_COLOR);
+	}
 
-  draw_text("Score: ", GRAPHIC_WIDTH - 90, 10, GREEN, BG_COLOR);
-  draw_text(itoa(score, 10), GRAPHIC_WIDTH - 40, 10, GREEN, BG_COLOR);
+	draw_text("Score: ", GRAPHIC_WIDTH - 90, 10, GREEN, BG_COLOR);
+	draw_text(itoa(score, 10), GRAPHIC_WIDTH - 40, 10, GREEN, BG_COLOR);
 }
 
 /*
  * the splash screen with sexy chiche's face.
  */
 
-static void	game_loop(void)
+static void game_loop(void)
 {
-  while (1)
-    {
-      unsigned long t = gettick();
-      if (!skater.trick_delay)
-	switch (getkey())
-	  {
-	  case KEY_SPACE:
-	    skater_jump(scrolling.freq);
-	    break;
-	  case KEY_RIGHT:
-	    scroll_speedup();
-	    break;
-	  case KEY_DOWN:
-	    skater_slide();
-	    break;
-	  case KEY_LEFT:
-	    skater_rotate();
-	    break;
-	  case KEY_UP:
-	    skater_flip();
-	    break;
-	  case KEY_ESC:
-	    return;
-	  default:
-	    break;
-	  }
+	while (1) {
+		unsigned long t = gettick();
+		if (!skater.trick_delay)
+			switch (getkey()) {
+			case KEY_SPACE:
+				skater_jump(scrolling.freq);
+				break;
+			case KEY_RIGHT:
+				scroll_speedup();
+				break;
+			case KEY_DOWN:
+				skater_slide();
+				break;
+			case KEY_LEFT:
+				skater_rotate();
+				break;
+			case KEY_UP:
+				skater_flip();
+				break;
+			case KEY_ESC:
+				return;
+			default:
+				break;
+			}
 
-      draw_clear(BG_COLOR);
-      //      background();
-      park_draw();
-      skater_draw();
-      draw_score();
-      speed();
-      draw_end();
+		draw_clear(BG_COLOR);
+		//      background();
+		park_draw();
+		skater_draw();
+		draw_score();
+		speed();
+		draw_end();
 
-      /*
-       * 8ms between frames
-       */
-      while (gettick() - t <= 8)
-          ;
-      jiffies++;
+		/*
+		 * 8ms between frames
+		 */
+		while (gettick() - t <= 8) ;
+		jiffies++;
 
-      scroll();
-    }
+		scroll();
+	}
 }
 
 /*
  * game entry point.
  */
 
-void		entry(void)
+void entry(void)
 {
-  int		i;
+	int i;
 
-  gfx_init();
+	gfx_init();
 
-  switch_graphic();
+	switch_graphic();
 
-  while (1)
-    {
-      splash_screen();
+	while (1) {
+		splash_screen();
 
-      for (i = 0; i < 10; i++)
-	trick[i] = NULL;
+		for (i = 0; i < 10; i++)
+			trick[i] = NULL;
 
-      jiffies = 0;
-      score = 0;
-      park_init();
-      skater_init();
+		jiffies = 0;
+		score = 0;
+		park_init();
+		skater_init();
 
-      game_loop();
-    }
+		game_loop();
+	}
 
-  /*
-   * we should never arrive here...
-   */
-  switch_text ();
+	/*
+	 * we should never arrive here...
+	 */
+	switch_text();
 }

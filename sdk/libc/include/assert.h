@@ -21,15 +21,25 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef STDDEF_H_
-# define STDDEF_H_
+#ifndef ASSERT_H
+#define ASSERT_H
 
-/*
-** this include provides syscall definitions and also some type definitions
-** like size_t
-*/
-# include <kstd.h>
+#include <stdio.h>
 
-# define NULL ((void*) 0)
+#ifndef NDEBUG
+#define assert(exp)							\
+     do									\
+     {									\
+       if (!(exp))							\
+       {								\
+         printf("%s, %d: assertion '%s' failed\n",			\
+		__BASE_FILE__, __LINE__, exp);				\
+         printf("System halted.\n");					\
+         while (1)							\
+	   continue;							\
+       }								\
+     }									\
+     while (0)
+#endif
 
-#endif /* !STDDEF_H_ */
+#endif				/* !ASSERT_H */

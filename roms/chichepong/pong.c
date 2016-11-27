@@ -21,242 +21,226 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include <libk.h>
+#include <graphic.h>
+#include <sound.h>
 
 /*
  * the splash screen with sexy chiche's face.
  */
 
-static void	splash_screen(void)
+static void splash_screen(void)
 {
-  unsigned long	t;
-  t_image*	img	= load_image ("/chiche.bmp");
-  int		blink	= 0;
-  t_melody*	intro = load_sound ("/intro.ksf");
+	unsigned long t;
+	t_image *img = load_image("/chiche.bmp");
+	int blink = 0;
+	struct melody *intro = load_sound("/intro.ksf");
 
-  playsound (intro, -1);
+	playsound(intro, -1);
 
-  if (!img)
-    blue_screen ("Unable to load chiche.bmp");
+	if (!img)
+		blue_screen("Unable to load chiche.bmp");
 
-  while (getkey() == -1)
-    {
-      t = gettick ();
+	while (getkey() == -1) {
+		t = gettick();
 
-      draw_begin ();
-      draw_image (img, 5, 10);
-      draw_text ("   Chiche Pong   ", 160, 50, RED, 0);
-      draw_text ("powered by Chiche", 160, 60, ORANGE, 0);
-      if (blink >= 5)
-	draw_text ("Any key to start", 160, 90, WHITE, 0);
-      draw_text ("Kernel option - LSE - 2006-2007", 5, 190, BLUE, 0);
-      draw_end ();
+		draw_begin();
+		draw_image(img, 5, 10);
+		draw_text("   Chiche Pong   ", 160, 50, RED, 0);
+		draw_text("powered by Chiche", 160, 60, ORANGE, 0);
+		if (blink >= 5)
+			draw_text("Any key to start", 160, 90, WHITE, 0);
+		draw_text("Kernel option - LSE - 2006-2007", 5, 190, BLUE, 0);
+		draw_end();
 
-      /*
-       * 66 ms frame sync
-       */
+		/*
+		 * 66 ms frame sync
+		 */
 
-      blink = (blink + 1) % 10;
-      while (gettick () - t <= 66)
-	;
-    }
+		blink = (blink + 1) % 10;
+		while (gettick() - t <= 66) ;
+	}
 
-  playsound (NULL, -1);
+	playsound(NULL, -1);
 
-  clear_sound (intro);
-  clear_image(img);
+	clear_sound(intro);
+	clear_image(img);
 }
 
 /*
  * game loop.
  */
 
-static void	game_loop(void)
+static void game_loop(void)
 {
-  unsigned long	t;
-  t_image*	ball	= load_image ("/ball.bmp");
-  int		player1;
-  int		player2;
-  int		x, y;
-  int		dx, dy;
-  int		k;
-  int		standby	= 80;
-  t_melody*	sound = load_sound ("/ball.ksf");
+	unsigned long t;
+	t_image *ball = load_image("/ball.bmp");
+	int player1;
+	int player2;
+	int x, y;
+	int dx, dy;
+	int k;
+	int standby = 80;
+	struct melody *sound = load_sound("/ball.ksf");
 
-  if (!ball)
-    blue_screen ("Unable to load ball.bmp");
+	if (!ball)
+		blue_screen("Unable to load ball.bmp");
 
-  player1 = 100;
-  player2 = 100;
-  x = 160;
-  y = 100;
-  dx = 2;
-  dy = 2;
+	player1 = 100;
+	player2 = 100;
+	x = 160;
+	y = 100;
+	dx = 2;
+	dy = 2;
 
-  while (1)
-    {
-      t = gettick ();
+	while (1) {
+		t = gettick();
 
-      draw_begin ();
+		draw_begin();
 
-      /*
-       * draw screen borders
-       */
+		/*
+		 * draw screen borders
+		 */
 
-      draw_line (0, 0, 319, 0, 64);
-      draw_line (0, 199, 319, 199, 64);
-      draw_line (0, 1, 319, 1, 192);
-      draw_line (0, 198, 319, 198, 192);
+		draw_line(0, 0, 319, 0, 64);
+		draw_line(0, 199, 319, 199, 64);
+		draw_line(0, 1, 319, 1, 192);
+		draw_line(0, 198, 319, 198, 192);
 
-      if (!standby)
-	{
-	  /*
-	   * player actions.
-	   */
+		if (!standby) {
+			/*
+			 * player actions.
+			 */
 
-	  k = getkey ();
-	  if (k != -1)
-	    {
-	      if (k == KEY_DOWN)
-		player1 += 5;
-	      if (k == KEY_UP)
-		player1 -= 5;
-	      if (k == KEY_ESC)
-		break;
-	    }
-	}
-      if (player1 + 20 >= 200)
-	player1 = 179;
-      if (player1 - 20 < 0)
-	player1 = 20;
+			k = getkey();
+			if (k != -1) {
+				if (k == KEY_DOWN)
+					player1 += 5;
+				if (k == KEY_UP)
+					player1 -= 5;
+				if (k == KEY_ESC)
+					break;
+			}
+		}
+		if (player1 + 20 >= 200)
+			player1 = 179;
+		if (player1 - 20 < 0)
+			player1 = 20;
 
-      /*
-       * ball movement.
-       */
+		/*
+		 * ball movement.
+		 */
 
-      if (!standby)
-	{
-	  x += dx;
-	  y += dy;
-	}
+		if (!standby) {
+			x += dx;
+			y += dy;
+		}
 
-      /*
-       * edges.
-       */
+		/*
+		 * edges.
+		 */
 
-      if (y + 8 >= 200)
-	{
-	  y = 191;
-	  dy = -dy;
-	  playsound (sound, 1);
-	}
-      if (y - 8 < 0)
-	{
-	  y = 8;
-	  dy = -dy;
-	  playsound (sound, 1);
-	}
+		if (y + 8 >= 200) {
+			y = 191;
+			dy = -dy;
+			playsound(sound, 1);
+		}
+		if (y - 8 < 0) {
+			y = 8;
+			dy = -dy;
+			playsound(sound, 1);
+		}
 
-      /*
-       * computer player bar.
-       */
+		/*
+		 * computer player bar.
+		 */
 
-      player2 = y;
-      if (player2 + 20 >= 200)
-	player2 = 179;
-      if (player2 - 20 < 0)
-	player2 = 20;
+		player2 = y;
+		if (player2 + 20 >= 200)
+			player2 = 179;
+		if (player2 - 20 < 0)
+			player2 = 20;
 
-      if (standby)
-	{
-	  draw_text ("Ready ?", 130, 96, RED, 0);
-	  standby--;
-	}
+		if (standby) {
+			draw_text("Ready ?", 130, 96, RED, 0);
+			standby--;
+		}
 
-      /*
-       * draw players.
-       */
+		/*
+		 * draw players.
+		 */
 
-      draw_fillrect (0, player1 - 20, 10, player1 + 20, 71, 71);
-      draw_fillrect (309, player2 - 20, 319, player2 + 20, 23, 23);
+		draw_fillrect(0, player1 - 20, 10, player1 + 20, 71, 71);
+		draw_fillrect(309, player2 - 20, 319, player2 + 20, 23, 23);
 
-      if (!standby)
-	draw_image (ball, x - 8, y - 8);
+		if (!standby)
+			draw_image(ball, x - 8, y - 8);
 
-      if (x + 5 >= 309)
-	{
-	  dx = -dx;
-	  playsound (sound, 1);
-	}
-      if (x - 5 < 10)
-	{
-	  /*
-	   * player bar collision test.
-	   */
+		if (x + 5 >= 309) {
+			dx = -dx;
+			playsound(sound, 1);
+		}
+		if (x - 5 < 10) {
+			/*
+			 * player bar collision test.
+			 */
 
-	  if (player1 - 20 < y + 3 && player1 + 20 > y - 3)
-	    {
-	      dx = -dx;
-	      playsound (sound, 1);
-	    }
-	  else
-	    {
-	      draw_text ("You loose...", 112, 96, RED, 0);
-	      draw_end();
-	      while (gettick () - t < 1000)
-		;
-	      player1 = 100;
-	      player2 = 100;
-	      x = 160;
-	      y = 100;
-	      dx = 3;
-	      dy = 3;
-	      standby = 80;
-	      continue;
-	    }
+			if (player1 - 20 < y + 3 && player1 + 20 > y - 3) {
+				dx = -dx;
+				playsound(sound, 1);
+			} else {
+				draw_text("You loose...", 112, 96, RED, 0);
+				draw_end();
+				while (gettick() - t < 1000) ;
+				player1 = 100;
+				player2 = 100;
+				x = 160;
+				y = 100;
+				dx = 3;
+				dy = 3;
+				standby = 80;
+				continue;
+			}
+		}
+
+		draw_end();
+
+		/*
+		 * 33 ms sync between each frame.
+		 */
+
+		while (gettick() - t <= 33) ;
 	}
 
-      draw_end ();
-
-      /*
-       * 33 ms sync between each frame.
-       */
-
-      while (gettick () - t <= 33)
-	;
-    }
-
-  clear_sound (sound);
-  clear_image (ball);
+	clear_sound(sound);
+	clear_image(ball);
 }
 
 /*
  * game entry point.
  */
 
-void		entry(void)
+void entry(void)
 {
 #if 0
- unsigned long	t;
+	unsigned long t;
 
-  printf("\n\n\n\t== La demonstration qui suit a ete realisee sans trucages ==\n\n\n\n\n");
+	printf
+	    ("\n\n\n\t== La demonstration qui suit a ete realisee sans trucages ==\n\n\n\n\n");
 
-  t = gettick ();
-  while (gettick () - t < 7000)
-    ;
+	t = gettick();
+	while (gettick() - t < 7000) ;
 #endif
 
-  switch_graphic ();
+	switch_graphic();
 
-  while (1)
-    {
-      splash_screen ();
-      game_loop ();
-    }
+	while (1) {
+		splash_screen();
+		game_loop();
+	}
 
-  /*
-   * we should never arrive here...
-   */
+	/*
+	 * we should never arrive here...
+	 */
 
-  switch_text ();
+	switch_text();
 }

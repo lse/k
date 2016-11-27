@@ -23,21 +23,24 @@
 #
 include ../../config.mk
 
-TARGET	= libc.a
-OBJS	= string.o stdlib.o stdio.o
+LIB	= libc.a
+OBJS	= \
+	  memcmp.o \
+	  memcpy.o \
+	  memset.o \
+	  stdio.o \
+	  strcmp.o \
+	  strcpy.o \
+	  strlen.o \
+	  strncmp.o \
 
-CFLAGS	+= -I .
+DEPS = $(OBJS:.o=.d)
 
-all: $(TARGET)
+CPPFLAGS += -MMD -Iinclude -I../../k/include/
 
-$(TARGET): $(OBJS)
-	$(AR) -rcs $@ $^
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+all: $(LIB)($(OBJS))
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(DEPS) $(LIB)
 
-distclean: clean
-	$(RM) $(TARGET)
+-include $(DEPS)

@@ -23,33 +23,24 @@
 #
 include ../config.mk
 
-ROMS	= chichepong	\
-	  chichehunter	\
-	  chichevaders	\
-	  perrodlauncher\
-	  skate		\
-	  yakanoid
+ROMS	= \
+	  KGameBoy \
+	  chichehunter \
+	  chichepong \
+	  chichevaders \
+	  perrodlauncher \
+	  skate \
+	  yakanoid \
 
-GAME	?= chichepong
+.PHONY: $(ROMS)
 
-TARGET	= rom
+all: $(ROMS)
 
-.PHONY: $(TARGET)
-
-all: $(TARGET)
-
-$(TARGET):
-	$(MAKE) -C $(GAME) rom
+$(ROMS):
+	$(MAKE) -C $@
 
 clean:
 	for I in $(ROMS);			\
 	do					\
 		$(MAKE) -C $$I $@ || exit 1;	\
 	done
-
-distclean:
-	for I in $(ROMS);			\
-	do					\
-		$(MAKE) -C $$I $@ || exit 1;	\
-	done
-	$(RM) $(TARGET)

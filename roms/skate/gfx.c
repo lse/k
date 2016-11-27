@@ -27,35 +27,46 @@
  *
  */
 
-t_gfx		graphics[] = 
-  {
-    { TRICK_NONE, 7, "skater1.bmp skater2.bmp", NULL },
-    { TRICK_RUN, 7, "skater3.bmp skater4.bmp skater5.bmp skater6.bmp", NULL },
-    { TRICK_FLIP, 5, "/flip1.bmp /flip2.bmp /flip3.bmp /flip4.bmp /flip5.bmp", NULL },
-    { TRICK_UP, 4, "/skaterup.bmp", NULL },
-    { TRICK_SLIDE, 6, "/slide1.bmp /slide2.bmp", NULL },
-    { TRICK_CRASH, 6, "/crash.bmp", NULL },
-    { TRICK_ROTATE, 8, "/rotate1.bmp /rotate2.bmp /rotate3.bmp /rotate4.bmp /rotate5.bmp", NULL },
-    { BOX_UP, 0, "/boxup.bmp", NULL },
-    { BOX, 0, "/box.bmp", NULL },
-    { BOX_RAIL, 0, "/rail.bmp", NULL },
-    { 0, 0, NULL, NULL }
-  };
+t_gfx graphics[] = {
+	{TRICK_NONE, 7, "skater1.bmp skater2.bmp", NULL}
+	,
+	{TRICK_RUN, 7, "skater3.bmp skater4.bmp skater5.bmp skater6.bmp", NULL}
+	,
+	{TRICK_FLIP, 5,
+	 "/flip1.bmp /flip2.bmp /flip3.bmp /flip4.bmp /flip5.bmp", NULL}
+	,
+	{TRICK_UP, 4, "/skaterup.bmp", NULL}
+	,
+	{TRICK_SLIDE, 6, "/slide1.bmp /slide2.bmp", NULL}
+	,
+	{TRICK_CRASH, 6, "/crash.bmp", NULL}
+	,
+	{TRICK_ROTATE, 8,
+	 "/rotate1.bmp /rotate2.bmp /rotate3.bmp /rotate4.bmp /rotate5.bmp",
+	 NULL}
+	,
+	{BOX_UP, 0, "/boxup.bmp", NULL}
+	,
+	{BOX, 0, "/box.bmp", NULL}
+	,
+	{BOX_RAIL, 0, "/rail.bmp", NULL}
+	,
+	{0, 0, NULL, NULL}
+};
 
 /*
  *
  */
 
-void		gfx_init(void)
+void gfx_init(void)
 {
-  t_gfx		*gfx = graphics;
-  int		i;
+	t_gfx *gfx = graphics;
+	int i;
 
-  for (i = 0; gfx[i].filename; i++)
-    {
-      if (gfx[i].delay)
-	gfx[i].gfx = load_anim(gfx[i].filename, gfx[i].delay);
-      else
-	gfx[i].gfx = load_image(gfx[i].filename);
-    }
+	for (i = 0; gfx[i].filename; i++) {
+		if (gfx[i].delay)
+			gfx[i].gfx = load_anim(gfx[i].filename, gfx[i].delay);
+		else
+			gfx[i].gfx = load_image(gfx[i].filename);
+	}
 }
