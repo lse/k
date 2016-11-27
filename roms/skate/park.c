@@ -23,140 +23,149 @@
 */
 #include "skate.h"
 
-enum e_gfx      park[] = {NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP, NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP};
-t_scrolling	scrolling;
+enum e_gfx park[] =
+    { NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
+	    BOX_UP
+};
 
+t_scrolling scrolling;
 
-void		scroll_stop(void)
+void scroll_stop(void)
 {
-  scrolling.timer1 = scrolling.timer2 = jiffies;
-  scrolling.freq = 6;
+	scrolling.timer1 = scrolling.timer2 = jiffies;
+	scrolling.freq = 6;
 }
 
-static void	scroll_init(void)
+static void scroll_init(void)
 {
-  scrolling.step = 2;
-  scrolling.width = 0;
-  scrolling.current_box = 0;
-  scrolling.x = 0;
-  scroll_stop();
-}
-
-/*
- *
- */
-
-void		park_init(void)
-{
-  scroll_init();
-}
-
-/*
- *
- */ 
-
-int		get_box(int		x)
-{
-  return x / BOX_WIDTH;
-}
-
-int		get_shift(int		x)
-{
-  return x % BOX_WIDTH;
+	scrolling.step = 2;
+	scrolling.width = 0;
+	scrolling.current_box = 0;
+	scrolling.x = 0;
+	scroll_stop();
 }
 
 /*
  *
  */
 
-int		box_height(int		box,
-			   int		shift)
+void park_init(void)
 {
-  switch (park[box])
-    {
-    case BOX_UP:
-      return shift;
-    case BOX_RAIL:
-      if (skater.slide)
-	return 15;
-      else
-	return 0;
-    case BOX:
-      return BOX_HEIGHT;
-    default:
-      return 0;
-    }
+	scroll_init();
 }
 
 /*
  *
  */
 
-void            park_draw(void)
+int get_box(int x)
 {
-  int		box = get_box(scrolling.x);
-  int		x = -get_shift(scrolling.x);
-
-  do
-    {
-      if (graphics[park[box]].gfx)
-	draw_image_alpha(graphics[park[box]].gfx,
-			 x, GRAPHIC_HEIGHT - 10 - BOX_HEIGHT, BG_COLOR);
-
-      x += BOX_WIDTH;
-      box++;
-    }
-  while (x < GRAPHIC_WIDTH);
+	return x / BOX_WIDTH;
 }
 
-
-void		scroll(void)
+int get_shift(int x)
 {
-  // automatic slow down
-  if (!skater.slide)
-    if (jiffies - scrolling.timer1 >= 20)
-      {
-	scrolling.timer1 = jiffies;
-	scroll_slowdown();
-      }
+	return x % BOX_WIDTH;
+}
 
-  // scroll left
-  if (jiffies - scrolling.timer2 >= (unsigned long)scrolling.freq)
-    {
-      scrolling.timer2 = jiffies;
-      if (scrolling.freq < 6)
-	{
-	  if (skater.x < GRAPHIC_WIDTH / 2 - BOX_WIDTH)
-	    skater.x += scrolling.step;
-	  else
-	    {
-	      scrolling.x += scrolling.step;
-	      scrolling.width += scrolling.step;
-	    }
+/*
+ *
+ */
+
+int box_height(int box, int shift)
+{
+	switch (park[box]) {
+	case BOX_UP:
+		return shift;
+	case BOX_RAIL:
+		if (skater.slide)
+			return 15;
+		else
+			return 0;
+	case BOX:
+		return BOX_HEIGHT;
+	default:
+		return 0;
 	}
-    }
-
-  //
-  if (scrolling.width == BOX_WIDTH)
-    {
-      scrolling.width = 0;
-      scrolling.current_box++;
-    }
 }
 
-int		scroll_slowdown(void)
+/*
+ *
+ */
+
+void park_draw(void)
 {
-  scrolling.freq++;
-  if (scrolling.freq > 6)
-    scrolling.freq = 6;
-  return scrolling.freq;
+	int box = get_box(scrolling.x);
+	int x = -get_shift(scrolling.x);
+
+	do {
+		if (graphics[park[box]].gfx)
+			draw_image_alpha(graphics[park[box]].gfx,
+					 x, GRAPHIC_HEIGHT - 10 - BOX_HEIGHT,
+					 BG_COLOR);
+
+		x += BOX_WIDTH;
+		box++;
+	}
+	while (x < GRAPHIC_WIDTH);
 }
 
-int		scroll_speedup(void)
+void scroll(void)
 {
-  scrolling.freq -= 2;
-  if (scrolling.freq <= 0)
-    scrolling.freq = 0;
-  return scrolling.freq;
+	// automatic slow down
+	if (!skater.slide)
+		if (jiffies - scrolling.timer1 >= 20) {
+			scrolling.timer1 = jiffies;
+			scroll_slowdown();
+		}
+	// scroll left
+	if (jiffies - scrolling.timer2 >= (unsigned long)scrolling.freq) {
+		scrolling.timer2 = jiffies;
+		if (scrolling.freq < 6) {
+			if (skater.x < GRAPHIC_WIDTH / 2 - BOX_WIDTH)
+				skater.x += scrolling.step;
+			else {
+				scrolling.x += scrolling.step;
+				scrolling.width += scrolling.step;
+			}
+		}
+	}
+	//
+	if (scrolling.width == BOX_WIDTH) {
+		scrolling.width = 0;
+		scrolling.current_box++;
+	}
 }
 
+int scroll_slowdown(void)
+{
+	scrolling.freq++;
+	if (scrolling.freq > 6)
+		scrolling.freq = 6;
+	return scrolling.freq;
+}
+
+int scroll_speedup(void)
+{
+	scrolling.freq -= 2;
+	if (scrolling.freq <= 0)
+		scrolling.freq = 0;
+	return scrolling.freq;
+}

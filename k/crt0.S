@@ -22,16 +22,22 @@
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #define	MAGIC		0x1badb002
-#define FLAGS		0x7 /* PAGE_ALIGN | MEMORY_INFO | VIDEO_INFO */
+#define FLAGS		0x3 /* PAGE_ALIGN | MEMORY_INFO */
 
-.section .multiboot
+	.section .multiboot
+	.type multiboot_header, @object
+multiboot_header:
 	.align		4
 	.long		MAGIC
 	.long		FLAGS
 	.long		-(MAGIC + FLAGS)
+	.size multiboot_header, . - multiboot_header
 
-.global k_entry
+	.section .text
+	.global k_entry
+	.type k_entry, @function
 k_entry:
 	push %ebx	/* multiboot info */
 	push %eax	/* magic */
 	call k_main	/* kernel entry point */
+	.size k_entry, . - k_entry

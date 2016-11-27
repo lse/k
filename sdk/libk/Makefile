@@ -23,25 +23,24 @@
 #
 include ../../config.mk
 
-TARGET	= libk.a
-OBJS	= int80.o syscalls.o graphic.o sound.o malloc.o
+LIB	= libk.a
+OBJS	= \
+	  calloc.o \
+	  graphic.o \
+	  itoa.o \
+	  malloc.o \
+	  realloc.o \
+	  sound.o \
+	  strdup.o \
+	  syscalls.o \
 
-CFLAGS	+= -I ../libc
-LDFLAGS	+= -L ../libc -lc
+DEPS = $(OBJS:.o=.d)
 
-all: $(TARGET)
+CPPFLAGS += -MMD -Iinclude -I../../k/include/ -I../libc/include/
 
-$(TARGET): $(OBJS)
-	$(AR) -rcs $@ $^
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-%.o: %.S
-	$(CC) $(CFLAGS) -c $^ -o $@
+all: $(LIB)($(OBJS))
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(DEPS) $(LIB)
 
-distclean: clean
-	$(RM) $(TARGET)
+-include $(DEPS)

@@ -21,32 +21,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include ../../config.mk
 
-TARGET	  = rom_prog
+TARGET	  = pong
 OBJS	  = pong.o
-ROM_FILE  = ../rom
 ROM_TITLE = "pong"
-ROM_FILES = $(TARGET) chiche.bmp ball.bmp intro.ksf ball.ksf
+ROM_FILES = \
+	    $(TARGET) \
+	    ball.bmp \
+	    ball.ksf \
+	    chiche.bmp \
+	    intro.ksf \
 
-CFLAGS	+= -I ../../sdk/libk -I ../../sdk/libc
-LDFLAGS	+= -L ../../sdk/libk -L ../../sdk/libc -lk -lc -T ../roms.lds
-
-MKKFS	= ../../sdk/mkkfs/mkkfs
-
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-clean:
-	$(RM) $(OBJS)
-
-distclean: clean
-	$(RM) $(TARGET)
-
-rom: $(TARGET)
-	$(MKKFS) -r $(ROM_FILE) -n $(ROM_TITLE) -f $(ROM_FILES)
+include ../roms.mk

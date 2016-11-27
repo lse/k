@@ -24,42 +24,40 @@
 include ../config.mk
 
 TARGET	= k
-OBJS	=	crt0.o		\
-		main.o		\
-		write.o		\
-		pm.o		\
-		sbrk.o		\
-		events.o	\
-		pic.o		\
-		isr.o		\
-		kbd.o		\
-		pit.o		\
-		syscall.o	\
-		syscall_gate.o	\
-		vga.o		\
-		libvga.o	\
-		kfs.o		\
-		exec.o		\
-		sound.o		\
-		serial.o	\
-		malloc.o
+OBJS	= \
+	  console.o \
+	  crt0.o \
+	  events.o \
+	  exec.o \
+	  isr.o \
+	  k.o \
+	  kbd.o \
+	  kfs.o \
+	  libvga.o \
+	  malloc.o \
+	  pic.o \
+	  pit.o \
+	  pm.o \
+	  sbrk.o \
+	  screen.o \
+	  serial.o \
+	  sound.o \
+	  syscall.o \
+	  syscall_gate.o \
+	  vga.o \
+	  write.o \
 
-CFLAGS	+= -I ../sdk/libc
-LDFLAGS += -T k.lds -L../sdk/libc -lc
+CPPFLAGS += -MMD -Iinclude -I ../sdk/libc/include/
+LDFLAGS += -Wl,-Tk.lds
+LDLIBS = -L../sdk/libc -lc
+
+DEPS = $(OBJS:.o=.d)
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-%.o: %.S
-	$(CC) $(CFLAGS) -c $^ -o $@
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
-distclean: clean
-	$(RM) $(TARGET)
+-include $(DEPS)

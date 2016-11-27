@@ -21,94 +21,106 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include <kstd.h>
+#include <k/kstd.h>
 #include <stddef.h>
 
-// int80.S
-int int80(int syscall_nb, ...);
-
-int write(const char* s, size_t length)
+static inline u32 syscall0(int syscall_nb)
 {
-  return ((int) int80(SYSCALL_WRITE, s, length));
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb));
+
+	return res;
 }
 
-void* sbrk(ssize_t increment)
+static inline u32 syscall1(int syscall_nb, u32 ebx)
 {
-  return ((void*) int80(SYSCALL_SBRK, increment));
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx));
+
+	return res;
+}
+
+static inline u32 syscall2(int syscall_nb, u32 ebx, u32 ecx)
+{
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx), "c"(ecx));
+
+	return res;
+}
+
+static inline u32 syscall3(int syscall_nb, u32 ebx, u32 ecx, u32 edx)
+{
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx), "c"(ecx), "d"(edx));
+
+	return res;
+}
+
+int write(const void *s, size_t length)
+{
+	return ((int)syscall2(SYSCALL_WRITE, (u32)s, length));
+}
+
+void *sbrk(ssize_t increment)
+{
+	return ((void *)syscall1(SYSCALL_SBRK, increment));
 }
 
 int getkey(void)
 {
-  return ((int) int80(SYSCALL_GETKEY));
+	return ((int)syscall0(SYSCALL_GETKEY));
 }
 
 unsigned long gettick(void)
 {
-  return ((unsigned long) int80(SYSCALL_GETTICK));
+	return ((unsigned long)syscall0(SYSCALL_GETTICK));
 }
 
-int open(const char* pathname, int flags)
+int open(const char *pathname, int flags)
 {
-  return ((int) int80(SYSCALL_OPEN, pathname, flags));
+	return ((int)syscall2(SYSCALL_OPEN, (u32)pathname, flags));
 }
 
-ssize_t	read(int fd, void* buf, size_t count)
+ssize_t read(int fd, void *buf, size_t count)
 {
-  return ((ssize_t) int80(SYSCALL_READ, fd, buf, count));
+	return ((ssize_t)syscall3(SYSCALL_READ, fd, (u32)buf, count));
 }
 
 off_t seek(int filedes, off_t offset, int whence)
 {
-  return ((off_t) int80(SYSCALL_SEEK, filedes, offset, whence));
+	return ((off_t)syscall3(SYSCALL_SEEK, filedes, offset, whence));
 }
 
 int close(int fd)
 {
-  return ((int) int80(SYSCALL_CLOSE, fd));
+	return ((int)syscall1(SYSCALL_CLOSE, fd));
 }
 
-
-int playsound(t_melody* melody, int repeat)
+int playsound(struct melody *melody, int repeat)
 {
-  return ((int) int80(SYSCALL_PLAYSOUND, melody, repeat));
+	return ((int)syscall2(SYSCALL_PLAYSOUND, (u32)melody, repeat));
 }
 
 int setvideo(int mode)
 {
-  return ((int) int80(SYSCALL_SETVIDEO, mode));
+	return ((int)syscall1(SYSCALL_SETVIDEO, mode));
 }
 
 void swap_frontbuffer(const void *buffer)
 {
-  return int80(SYSCALL_SWAP_FRONTBUFFER, buffer);
+	syscall1(SYSCALL_SWAP_FRONTBUFFER, (u32)buffer);
 }
 
-void getpalette(t_palette* palette)
+int getmouse(int *x, int *y, int *buttons)
 {
-  int80(SYSCALL_GETPALETTE, palette);
-}
-
-void setpalette(t_palette* palette, size_t nb)
-{
-  int80(SYSCALL_SETPALETTE, palette, nb);
-}
-
-int getmouse(int* x, int* y, int* buttons)
-{
-  return ((int) int80(SYSCALL_GETMOUSE, x, y, buttons));
-}
-
-int send(int port, void* data, size_t len)
-{
-  return ((int) int80(SYSCALL_SEND, port, data, len));
-}
-
-int recv(int port, void* data, size_t len)
-{
-  return ((int) int80(SYSCALL_RECV, port, data, len));
+	return ((int)syscall3(SYSCALL_GETMOUSE, (u32)x, (u32)y, (u32)buttons));
 }
 
 int getkeymode(int mode)
 {
-  return ((int) int80(SYSCALL_GETKEYMODE, mode));
+	return ((int)syscall1(SYSCALL_GETKEYMODE, mode));
 }

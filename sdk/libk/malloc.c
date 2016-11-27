@@ -1,4 +1,4 @@
-#include <kstd.h>
+#include <k/kstd.h>
 #include <string.h>
 
 void *malloc(size_t size)
@@ -8,12 +8,5 @@ void *malloc(size_t size)
 
 void free(void *ptr)
 {
-	(void) ptr;
-}
-
-void *realloc(void *ptr, size_t size)
-{
-	void *res = malloc(size);
-	memcpy(res, ptr, size);
-	return res;
+	(void)ptr;
 }

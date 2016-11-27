@@ -47,6 +47,11 @@ SECTIONS
 
 	.data :
 	{
-		*(.data) *(.bss) *(COMMON)
+		*(.data)
+	} : data
+
+	.bss :
+	{
+		*(.bss) *(COMMON)
 	} : data
 }

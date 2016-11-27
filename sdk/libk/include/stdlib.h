@@ -21,20 +21,19 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#ifndef STDLIB_H_
+#define STDLIB_H_
 
-// int80:	this function calls the interrupt gate 0x80.
-//		this gate is known to be the system calls gate.
-.global int80
-int80:
-	push %ebp
-	mov %esp, %ebp
-	push %ebx
-	mov 8(%ebp), %eax /* Syscall number */
-	mov 12(%ebp), %ebx /* First argument */
-	mov 16(%ebp), %ecx /* Second argument */
-        mov 20(%ebp), %edx /* Third argument */
-	int $0x80
-	pop %ebx
-	mov %ebp, %esp
-	pop %ebp
-	ret
+#include <stddef.h>
+
+void *malloc(size_t size);
+
+void *realloc(void *ptr, size_t size);
+
+void free(void *ptr);
+
+void *calloc(size_t nmemb, size_t size);
+
+char *itoa(int nb, int base);
+
+#endif				/* !STDLIB_H_ */

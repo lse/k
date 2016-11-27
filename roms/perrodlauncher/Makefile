@@ -21,33 +21,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include ../../config.mk
 
-TARGET	  = rom_prog
+TARGET	  = perrodlauncher
 OBJS	  = perrodlauncher.o
-ROM_FILE  = ../rom
 ROM_TITLE = "perrodlauncher"
-ROM_FILES = $(TARGET) yaka.bmp nuage.bmp sol.bmp 1.bmp 2.bmp 3.bmp 4.bmp 5.bmp \
-	 6.bmp 7.bmp 8.bmp intro.csf ball.csf
+ROM_FILES = \
+	    $(TARGET) \
+	    1.bmp \
+	    2.bmp \
+	    3.bmp \
+	    4.bmp \
+	    5.bmp \
+	    6.bmp \
+	    7.bmp \
+	    8.bmp \
+	    ball.csf \
+	    intro.csf \
+	    nuage.bmp \
+	    sol.bmp \
+	    yaka.bmp \
 
-CFLAGS	+= -I ../../sdk/libk -I ../../sdk/libc
-LDFLAGS	+= -L ../../sdk/libk -L ../../sdk/libc -lk -lc -T ../roms.lds
-
-MKKFS	= ../../sdk/mkkfs/mkkfs
-
-all: $(TARGET)
-
-$(TARGET): $(OBJS)
-	$(CC) $^ -o $@ $(LDFLAGS)
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-clean:
-	$(RM) $(OBJS)
-
-distclean: clean
-	$(RM) $(TARGET)
-
-rom: $(TARGET)
-	$(MKKFS) -r $(ROM_FILE) -n $(ROM_TITLE) -f $(ROM_FILES)
+include ../roms.mk
