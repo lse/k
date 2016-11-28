@@ -52,6 +52,16 @@ static void *xcalloc(size_t nmemb, size_t sz)
 	return ptr;
 }
 
+static ssize_t kfs_write(int fd, const void *buf, size_t len, off_t off)
+{
+	ssize_t rc = pwrite(fd, buf, len, off * KFS_BLK_SZ);
+
+	if (rc < 0)
+		err(1, "pwrite call failed");
+
+	return rc;
+}
+
 /**
  * @brief Write superblock to rom.
  */
@@ -76,8 +86,7 @@ kfs_write_superblock(int romfd, const char *fsname, uint32_t blk_cnt,
 	sblock.cksum = kfs_checksum(&sblock,
 				    sizeof(sblock) - sizeof(sblock.cksum));
 
-	lseek(romfd, 0, SEEK_SET);
-	write(romfd, &sblock, sizeof(sblock));
+	kfs_write(romfd, &sblock, sizeof(sblock), 0);
 }
 
 /**
@@ -137,9 +146,6 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 	pr_info("- writing inode %u\n", inode->inumber);
 	pr_info("writing data blocks to offset %u\n", blk_idx * KFS_BLK_SZ);
 
-	/* set file position to correct block */
-	lseek(romfd, blk_idx * KFS_BLK_SZ, SEEK_SET);
-
 	/* write direct blocks */
 	for (i = 0; i < KFS_DIRECT_BLK && kfs_read_block(fp, &blk); ++blk_idx, ++i) {
 		pr_info("write direct block to offset %u\n", blk_idx * KFS_BLK_SZ);
@@ -147,8 +153,7 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 		blk.idx = blk_idx;
 		blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
 
-		lseek(romfd, blk_idx * KFS_BLK_SZ, SEEK_SET);
-		write(romfd, &blk, sizeof(struct kfs_block));
+		kfs_write(romfd, &blk, sizeof(blk), blk.idx);
 
 		inode->d_blks[i] = blk_idx;
 		inode->d_blk_cnt++;
@@ -175,16 +180,14 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 
 				pr_info("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
 
-				lseek(romfd, blk.idx * KFS_BLK_SZ, SEEK_SET);
-				write(romfd, &blk, sizeof(struct kfs_block));
+				kfs_write(romfd, &blk, sizeof(blk), blk.idx);
 			}
 			inode->blk_cnt += j;
 			iblock_idx.idx = blk_idx++;
 			inode->i_blks[i] = iblock_idx.idx;
 			iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(struct kfs_iblock) - sizeof(iblock_idx.cksum));
 
-			lseek(romfd, iblock_idx.idx * KFS_BLK_SZ, SEEK_SET);
-			write(romfd, &iblock_idx, sizeof(struct kfs_iblock));
+			kfs_write(romfd, &iblock_idx, sizeof(iblock_idx), iblock_idx.idx);
 		}
 		inode->i_blk_cnt = i;
 		if (!feof(fp)) {
@@ -196,8 +199,7 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 
 	pr_info("writing inode to offset %u\n", inode->idx * KFS_BLK_SZ);
 
-	lseek(romfd, inode->idx * KFS_BLK_SZ, SEEK_SET);
-	write(romfd, inode, sizeof(struct kfs_inode));
+	kfs_write(romfd, inode, sizeof(*inode), inode->idx);
 
 	return blk_idx;
 }
