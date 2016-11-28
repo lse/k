@@ -36,7 +36,7 @@ OBJS	= \
 
 DEPS = $(OBJS:.o=.d)
 
-CPPFLAGS += -MMD -Iinclude -I../../k/include/
+$(OBJS): CPPFLAGS += -MMD -Iinclude -I../../k/include/
 
 all: $(LIB)($(OBJS))
 

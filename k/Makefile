@@ -47,14 +47,14 @@ OBJS	= \
 	  vga.o \
 	  write.o \
 
-CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
-LDFLAGS += -Wl,-Tk.lds
-LDLIBS = -L../libs/libc -lc
 
 DEPS = $(OBJS:.o=.d)
 
 all: $(TARGET)
 
+$(TARGET): CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
+$(TARGET): LDFLAGS += -Wl,-Tk.lds
+$(TARGET): LDLIBS = -L../libs/libc -lc
 $(TARGET): $(OBJS)
 
 clean:
