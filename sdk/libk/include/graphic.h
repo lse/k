@@ -24,7 +24,7 @@
 #ifndef GRAPHIC_H_
 #define GRAPHIC_H_
 
-#include <k/kstd.h>
+#include <kstd.h>
 #include <stddef.h>
 #include <string.h>
 #include <stdio.h>
