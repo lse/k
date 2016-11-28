@@ -75,12 +75,9 @@ kfs_write_superblock(FILE * out, const char *fsname, uint32_t blk_cnt,
  */
 static struct kfs_block *kfs_read_block(FILE * fp, struct kfs_block *blk)
 {
-	size_t sz;
-
 	memset(blk, 0, sizeof(struct kfs_block));
-	if (!(sz = fread(blk->data, 1, sizeof(blk->data), fp)))
+	if (!(blk->usage = fread(blk->data, 1, sizeof(blk->data), fp)))
 		return NULL;
-	blk->usage = sz;
 	return blk;
 }
 
@@ -89,21 +86,22 @@ static struct kfs_block *kfs_read_block(FILE * fp, struct kfs_block *blk)
  */
 static struct kfs_inode **kfs_alloc_inodes(char **argv, uint32_t off, uint32_t * inode_cnt)
 {
-	struct stat st;
 	struct kfs_inode **inodes;
 	uint32_t i;
 	char **ptr;
 
 	for (ptr = argv; *ptr; ++ptr)
 		continue;
+
 	*inode_cnt = ptr - argv;
 	inodes = calloc((*inode_cnt + 1), sizeof(struct kfs_inode *));
 
 	for (i = 0; *argv; ++i, ++argv) {
 		inodes[i] = malloc(sizeof(struct kfs_inode));
 		memset(inodes[i], 0, sizeof(struct kfs_inode));
-		strncpy(inodes[i]->filename, *argv, sizeof(inodes[i]->filename));
+		strncpy(inodes[i]->filename, basename(*argv), sizeof(inodes[i]->filename));
 
+		struct stat st;
 		if (stat(*argv, &st) < 0)
 			err(1, "error stating file %s\n", *argv);
 
@@ -125,7 +123,6 @@ static struct kfs_inode **kfs_alloc_inodes(char **argv, uint32_t off, uint32_t *
 static uint32_t
 kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx)
 {
-
 	struct kfs_block blk;
 	uint32_t i, j;
 
