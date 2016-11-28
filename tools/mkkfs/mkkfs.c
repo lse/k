@@ -42,16 +42,6 @@ static int verbose;
 		} \
 	} while (0)
 
-static void *xcalloc(size_t nmemb, size_t sz)
-{
-	void *ptr = calloc(nmemb, sz);
-
-	if (!ptr)
-		err(1, "calloc failed");
-
-	return ptr;
-}
-
 static ssize_t kfs_write(int fd, const void *buf, size_t len, off_t off)
 {
 	ssize_t rc = pwrite(fd, buf, len, off * KFS_BLK_SZ);
@@ -104,35 +94,6 @@ static struct kfs_block *kfs_read_block(FILE *fp, struct kfs_block *blk)
 }
 
 /**
- * @brief Allocate all needed inodes.
- */
-static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32_t off)
-{
-	struct kfs_inode **inodes = xcalloc(nb_files + 1, sizeof(*inodes));
-
-	for (size_t i = 0; i < nb_files; ++i) {
-		inodes[i] = xcalloc(1, sizeof(struct kfs_inode));
-
-		strncpy(inodes[i]->filename, basename(files[i]),
-			sizeof(inodes[i]->filename));
-
-		struct stat st;
-
-		if (stat(files[i], &st) < 0)
-			err(1, "error stating file %s\n", files[i]);
-
-		inodes[i]->file_sz = st.st_size;
-		inodes[i]->idx = off++;
-		inodes[i]->next_inode = off;
-		inodes[i]->blk_cnt = 0;
-		inodes[i]->inumber = i + 1;
-	}
-	inodes[nb_files - 1]->next_inode = 0;
-
-	return inodes;
-}
-
-/**
  * @brief Write file inode & blocks to rom.
  * @return the next available block index;
  */
@@ -176,25 +137,29 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 
 				blk.idx = blk_idx++;
 				blk.cksum = kfs_checksum(&blk, sizeof(blk));
+
 				iblock_idx.blks[iblock_idx.blk_cnt++] = blk.idx;
 
 				pr_info("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
 
 				kfs_write(romfd, &blk, sizeof(blk), blk.idx);
 			}
-			inode->blk_cnt += j;
 			iblock_idx.idx = blk_idx++;
+			iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(iblock_idx) - sizeof(iblock_idx.cksum));
+
+			inode->blk_cnt += j;
 			inode->i_blks[i] = iblock_idx.idx;
-			iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(struct kfs_iblock) - sizeof(iblock_idx.cksum));
 
 			kfs_write(romfd, &iblock_idx, sizeof(iblock_idx), iblock_idx.idx);
 		}
 		inode->i_blk_cnt = i;
+
 		if (!feof(fp)) {
 			errx(1, "file is too large to be written to kfs");
 			return 0;
 		}
 	}
+
 	inode->cksum = kfs_checksum(inode, sizeof(*inode) - sizeof(inode->cksum));
 
 	pr_info("writing inode to offset %u\n", inode->idx * KFS_BLK_SZ);
@@ -210,17 +175,32 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 static uint32_t
 kfs_write_files(int romfd, char **files, size_t nb_files, size_t blkoff)
 {
-	struct kfs_inode **inodes = kfs_alloc_inodes(files, nb_files, blkoff);
-
+	size_t inode_off = blkoff;
 	size_t blk_idx = nb_files + blkoff;
 
-	for (size_t i = 0; i < nb_files; ++i) {
+	for (size_t i = 0; i < nb_files; ++i, inode_off++) {
 		FILE *fp = fopen(files[i], "r");
 
 		if (!fp)
 			err(1, "unable to open \"%s\"", files[i]);
 
-		blk_idx = kfs_write_inode(romfd, fp, inodes[i], blk_idx);
+		struct stat st;
+		stat(files[i], &st);
+
+		struct kfs_inode inode = {
+			.idx = inode_off,
+			.next_inode = inode_off + 1,
+			.inumber = i + 1,
+			.file_sz = st.st_size,
+		};
+
+		strncpy(inode.filename, basename(files[i]), sizeof(inode.filename));
+
+		/* fix last inode */
+		if (i == nb_files - 1)
+			inode.next_inode = 0;
+
+		blk_idx = kfs_write_inode(romfd, fp, &inode, blk_idx);
 
 		fclose(fp);
 	}
