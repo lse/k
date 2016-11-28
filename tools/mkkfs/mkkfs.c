@@ -61,7 +61,11 @@ kfs_write_superblock(int romfd, const char *fsname, uint32_t blk_cnt,
 {
 	struct kfs_superblock sblock = {
 		.magic = KFS_MAGIC,
+#ifdef DEBUG
+		.ctime = 0,
+#else
 		.ctime = time(NULL),
+#endif
 		.blk_cnt = blk_cnt,
 		.inode_idx = 1,
 		.inode_cnt = files_cnt,
@@ -181,7 +185,6 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 
 			lseek(romfd, iblock_idx.idx * KFS_BLK_SZ, SEEK_SET);
 			write(romfd, &iblock_idx, sizeof(struct kfs_iblock));
-			lseek(romfd, blk_idx * KFS_BLK_SZ, SEEK_SET);
 		}
 		inode->i_blk_cnt = i;
 		if (!feof(fp)) {
