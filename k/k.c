@@ -26,6 +26,7 @@
 
 #include "console.h"
 #include "init.h"
+#include "kfs.h"
 #include "multiboot.h"
 #include "syscall.h"
 
@@ -49,7 +50,9 @@ void k_main(unsigned long magic, multiboot_info_t *info)
 	init_syscall();
 	write_init();
 	init_vga();
-	init_kfs((void *)((module_t *)info->mods_addr)[0].mod_start);
+
+	if (kfs_init((void *)((module_t *)info->mods_addr)[0].mod_start) < 0)
+		printf("[+] unable to init kfs\n");
 
 	if (init_rom(cmdline) < 0)
 		printf("[+] unable to init rom \"%s\"\n", cmdline);
