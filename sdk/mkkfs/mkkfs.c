@@ -268,19 +268,19 @@ int main(int argc, char **argv)
 		rom_name = rom_file;
 
 	FILE *rom = fopen(rom_file, "w");
-	if (!rom) {
+	if (!rom)
 		err(1, "error opening file %s for writing", rom_file);
-		return 1;
-	}
+
 	pr_info("block size: %u\n", KFS_BLK_SZ);
 
-	uint32_t blk_cnt, inode_cnt;
+	uint32_t blk_cnt;
+	uint32_t inode_cnt;
 	if (!(blk_cnt = kfs_write_files(rom, files, 1, &inode_cnt))) {
 		fclose(rom);
 		return 1;
 	}
+
 	kfs_write_superblock(rom, rom_name, blk_cnt, inode_cnt);
-	fclose(rom);
 
 	return 0;
 }
