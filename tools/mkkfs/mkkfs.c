@@ -143,6 +143,7 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 		blk.idx = blk_idx;
 		blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
 
+		lseek(romfd, blk_idx * KFS_BLK_SZ, SEEK_SET);
 		write(romfd, &blk, sizeof(struct kfs_block));
 
 		inode->d_blks[i] = blk_idx;
@@ -170,6 +171,7 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 
 				pr_info("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
 
+				lseek(romfd, blk.idx * KFS_BLK_SZ, SEEK_SET);
 				write(romfd, &blk, sizeof(struct kfs_block));
 			}
 			inode->blk_cnt += j;
@@ -177,6 +179,7 @@ kfs_write_inode(int romfd, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 			inode->i_blks[i] = iblock_idx.idx;
 			iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(struct kfs_iblock) - sizeof(iblock_idx.cksum));
 
+			lseek(romfd, iblock_idx.idx * KFS_BLK_SZ, SEEK_SET);
 			write(romfd, &iblock_idx, sizeof(struct kfs_iblock));
 			lseek(romfd, blk_idx * KFS_BLK_SZ, SEEK_SET);
 		}
