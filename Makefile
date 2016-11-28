@@ -23,14 +23,29 @@
 #
 include config.mk
 
-SUBDIRS		= k roms sdk/libc sdk/libk sdk/mkkfs
+ROMS	= \
+	  roms/KGameBoy \
+	  roms/chichehunter \
+	  roms/chichepong \
+	  roms/chichevaders \
+	  roms/perrodlauncher \
+	  roms/skate \
+	  roms/yakanoid \
+
+SUBDIRS	= \
+	  $(ROMS) \
+	  k \
+	  sdk/libc \
+	  sdk/libk \
+	  sdk/mkkfs \
 
 .PHONY: $(SUBDIRS)
 
-all: k roms
+all: k $(ROMS)
 
 k: sdk/libc
-roms: sdk/mkkfs sdk/libc sdk/libk
+
+$(ROMS): sdk/mkkfs sdk/libc sdk/libk
 
 $(SUBDIRS):
 	$(MAKE) -C $@
