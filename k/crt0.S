@@ -40,4 +40,6 @@ k_entry:
 	push %ebx	/* multiboot info */
 	push %eax	/* magic */
 	call k_main	/* kernel entry point */
+.Lend:
+	jmp .Lend
 	.size k_entry, . - k_entry

@@ -54,11 +54,15 @@ void k_main(unsigned long magic, multiboot_info_t *info)
 	write_init();
 	init_vga();
 
-	if (kfs_init((void *)((module_t *)info->mods_addr)[0].mod_start) < 0)
+	if (kfs_init((void *)((module_t *)info->mods_addr)[0].mod_start) < 0) {
 		printf("[+] unable to init kfs\n");
+		return;
+	}
 
-	if (rom_init(cmdline) < 0)
+	if (rom_init(cmdline) < 0) {
 		printf("[+] unable to init rom \"%s\"\n", cmdline);
+		return;
+	}
 
 	rom_exec();
 
