@@ -1,5 +1,7 @@
 #!/bin/sh
 
+iso_filename=$1
+
 mkdir -p root/
 mkdir -p root/roms/
 mkdir -p root/boot/grub/
@@ -18,4 +20,4 @@ menuentry "k - $name" {
 EOF
 done > root/boot/grub/grub.cfg
 
-grub-mkrescue -o k.iso root/
+grub-mkrescue -o $iso_filename root/

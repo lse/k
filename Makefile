@@ -41,11 +41,14 @@ SUBDIRS	= \
 
 .PHONY: $(SUBDIRS)
 
-all: k $(ROMS)
+all: k.iso
 
 k: sdk/libc
 
 $(ROMS): sdk/mkkfs sdk/libc sdk/libk
+
+k.iso: k $(ROMS)
+	./create-iso.sh $@
 
 $(SUBDIRS):
 	$(MAKE) -C $@
