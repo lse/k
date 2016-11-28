@@ -1,4 +1,4 @@
-#include <k/kstd.h>
+#include <kstd.h>
 #include <string.h>
 
 void *malloc(size_t size)

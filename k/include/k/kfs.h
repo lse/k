@@ -1,5 +1,5 @@
-#ifndef KFS_H
-#define KFS_H
+#ifndef K_KFS_H
+#define K_KFS_H
 
 #include <k/types.h>
 

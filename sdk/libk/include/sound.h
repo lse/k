@@ -24,7 +24,7 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-#include <k/kstd.h>
+#include <kstd.h>
 #include <stddef.h>
 #include <string.h>
 

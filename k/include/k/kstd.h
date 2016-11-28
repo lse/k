@@ -21,8 +21,8 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#ifndef KSTD_H_
-#define KSTD_H_
+#ifndef K_KSTD_H_
+#define K_KSTD_H_
 
 #include <k/types.h>
 
@@ -142,19 +142,5 @@ enum e_mouse_codes {
 #define SYSCALL_GETKEYMODE		13
 
 #define NR_SYSCALL			(SYSCALL_GETKEYMODE + 1)
-
-int write(const void *s, size_t length);
-void *sbrk(ssize_t increment);
-int getkey(void);
-unsigned long gettick(void);
-int open(const char *pathname, int flags);
-ssize_t read(int fd, void *buf, size_t count);
-off_t seek(int filedes, off_t offset, int whence);
-int close(int fd);
-int setvideo(int mode);
-void swap_frontbuffer(const void *buffer);
-int playsound(struct melody *melody, int repeat);
-int getmouse(int *x, int *y, int *buttons);
-int getkeymode(int mode);
 
 #endif				/* !KSTD_H_ */
