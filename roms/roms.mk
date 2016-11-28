@@ -1,12 +1,12 @@
 include ../../config.mk
 
-CPPFLAGS += -MMD -I ../../k/include -I ../../sdk/libc/include -I ../../sdk/libk/include
+CPPFLAGS += -MMD -I ../../k/include -I ../../libs/libc/include -I ../../libs/libk/include
 LDFLAGS += -Wl,-T../roms.lds
-LDLIBS	= -L ../../sdk/libk -L ../../sdk/libc -lk -lc
+LDLIBS	= -L ../../libs/libk -L ../../libs/libc -lk -lc
 
 DEPS = $(OBJS:.o=.d)
 
-MKKFS	= ../../sdk/mkkfs/mkkfs
+MKKFS	= ../../tools/mkkfs/mkkfs
 
 all: $(TARGET).rom
 
