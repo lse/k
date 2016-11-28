@@ -26,6 +26,19 @@
 #include <k/kstd.h>
 
 /*
+ * weak definition of write(), will be replaced by the right one at link time
+ */
+__attribute__((weak)) int write(const char *buf, size_t len)
+{
+	(void)buf;
+	(void)len;
+
+	asm ("ud2");
+
+	return -1;
+}
+
+/*
  * some constants and define
  */
 
