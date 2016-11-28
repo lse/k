@@ -7,35 +7,19 @@
 
 #define KFS_MIN_BLK_SZ 512
 
-#ifdef KFS_BLK_SZ
-#if (KFS_BLK_SZ < KFS_MIN_BLK_SZ)
-#define KFS_BLK_SZ KFS_MIN_BLK_SZ
-#endif
-#else
 #define KFS_BLK_SZ 4096
-#endif
 
 #define KFS_BLK_DATA_SZ (KFS_BLK_SZ - 3 * 4)
 
-#ifndef KFS_DIRECT_BLK
 #define KFS_DIRECT_BLK 10
-#endif
 
-#ifndef KFS_INDIRECT_BLK
 #define KFS_INDIRECT_BLK 16
-#endif
 
-#ifndef KFS_INDIRECT_BLK_CNT
 #define KFS_INDIRECT_BLK_CNT 16
-#endif
 
-#ifndef KFS_FNAME_SZ
 #define KFS_FNAME_SZ 32
-#endif
 
-#ifndef KFS_NAME_SZ
 #define KFS_NAME_SZ 32
-#endif
 
 #define __packed __attribute__((__packed__))
 
