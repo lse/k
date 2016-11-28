@@ -28,6 +28,7 @@
 #include "init.h"
 #include "kfs.h"
 #include "multiboot.h"
+#include "rom.h"
 #include "syscall.h"
 
 void k_main(unsigned long magic, multiboot_info_t *info)
@@ -41,24 +42,26 @@ void k_main(unsigned long magic, multiboot_info_t *info)
 	printf("[+] cmdline: %s\n", cmdline);
 
 	init_pm();
-	init_memory();
 	init_interrupt();
+	init_syscall();
+
 	init_pic();
 	init_kbd();
 	init_pit();
 	init_sound();
-	init_syscall();
+
+	init_memory();
 	write_init();
 	init_vga();
 
 	if (kfs_init((void *)((module_t *)info->mods_addr)[0].mod_start) < 0)
 		printf("[+] unable to init kfs\n");
 
-	if (init_rom(cmdline) < 0)
+	if (rom_init(cmdline) < 0)
 		printf("[+] unable to init rom \"%s\"\n", cmdline);
 
-	exec_rom();
+	rom_exec();
 
-	while (1)
-		asm volatile ("hlt\n\t");
+	for (;;)
+		asm volatile ("hlt");
 }
