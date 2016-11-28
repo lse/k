@@ -35,20 +35,20 @@ ROMS	= \
 SUBDIRS	= \
 	  $(ROMS) \
 	  k \
-	  sdk/libc \
-	  sdk/libk \
-	  sdk/mkkfs \
+	  libs/libc \
+	  libs/libk \
+	  tools/mkkfs \
 
 .PHONY: $(SUBDIRS)
 
 all: k.iso
 
-k: sdk/libc
+k: libs/libc
 
-$(ROMS): sdk/mkkfs sdk/libc sdk/libk
+$(ROMS): tools/mkkfs libs/libc libs/libk
 
 k.iso: k $(ROMS)
-	./create-iso.sh $@
+	./tools/create-iso.sh $@
 
 $(SUBDIRS):
 	$(MAKE) -C $@
@@ -58,3 +58,5 @@ clean:
 	do					\
 		$(MAKE) -C $$I $@ || exit 1;	\
 	done
+	$(RM) k.iso 
+	$(RM) -r root
