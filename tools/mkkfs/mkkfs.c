@@ -86,26 +86,21 @@ static struct kfs_block *kfs_read_block(FILE * fp, struct kfs_block *blk)
 /**
  * @brief Allocate all needed inodes.
  */
-static struct kfs_inode **kfs_alloc_inodes(char **argv, uint32_t off, uint32_t * inode_cnt)
+static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32_t off)
 {
 	struct kfs_inode **inodes;
 	uint32_t i;
-	char **ptr;
 
-	for (ptr = argv; *ptr; ++ptr)
-		continue;
+	inodes = calloc(nb_files + 1, sizeof(struct kfs_inode *));
 
-	*inode_cnt = ptr - argv;
-	inodes = calloc((*inode_cnt + 1), sizeof(struct kfs_inode *));
-
-	for (i = 0; *argv; ++i, ++argv) {
+	for (i = 0; *files; ++i, ++files) {
 		inodes[i] = malloc(sizeof(struct kfs_inode));
 		memset(inodes[i], 0, sizeof(struct kfs_inode));
-		strncpy(inodes[i]->filename, basename(*argv), sizeof(inodes[i]->filename));
+		strncpy(inodes[i]->filename, basename(*files), sizeof(inodes[i]->filename));
 
 		struct stat st;
-		if (stat(*argv, &st) < 0)
-			err(1, "error stating file %s\n", *argv);
+		if (stat(*files, &st) < 0)
+			err(1, "error stating file %s\n", *files);
 
 		inodes[i]->file_sz = st.st_size;
 		inodes[i]->idx = off++;
@@ -196,16 +191,16 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
  * @brief Write every file to rom from blkoff offset.
  */
 static uint32_t
-kfs_write_files(FILE * out, char **files, size_t blkoff, uint32_t * inode_cnt)
+kfs_write_files(FILE * out, char **files, size_t nb_files, size_t blkoff)
 {
 	uint32_t i;
-	struct kfs_inode **inodes = kfs_alloc_inodes(files, blkoff, inode_cnt);
+	struct kfs_inode **inodes = kfs_alloc_inodes(files, nb_files, blkoff);
 	if (!inodes) {
 		return 0;
 	}
-	size_t blk_idx = *inode_cnt + 1;
+	size_t blk_idx = nb_files + 1;
 
-	pr_info("%u inodes will be written.\n", *inode_cnt);
+	pr_info("%zu inodes will be written.\n", nb_files);
 
 	for (i = 0; *files; ++i, ++files) {
 		FILE *fp = fopen(*files, "r");
@@ -272,11 +267,9 @@ int main(int argc, char **argv)
 
 	pr_info("block size: %u\n", KFS_BLK_SZ);
 
-	uint32_t inode_cnt;
+	uint32_t blk_cnt = kfs_write_files(rom, files, nb_files, 1);
 
-	uint32_t blk_cnt = kfs_write_files(rom, files, 1, &inode_cnt);
-
-	kfs_write_superblock(rom, rom_name, blk_cnt, inode_cnt);
+	kfs_write_superblock(rom, rom_name, blk_cnt, nb_files);
 
 	return 0;
 }
