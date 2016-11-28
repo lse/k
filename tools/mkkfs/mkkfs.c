@@ -188,7 +188,7 @@ kfs_write_inode(FILE *out, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 			return 0;
 		}
 	}
-	inode->cksum = kfs_checksum(inode, sizeof(inode) - sizeof(inode->cksum));
+	inode->cksum = kfs_checksum(inode, sizeof(*inode) - sizeof(inode->cksum));
 
 	pr_info("writing inode to offset %u\n", inode->idx * KFS_BLK_SZ);
 	fseek(out, inode->idx * KFS_BLK_SZ, SEEK_SET);
