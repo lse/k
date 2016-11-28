@@ -50,20 +50,22 @@ static int verbose;
 /**
  * @brief Write superblock to rom.
  */
-static inline void
+static void
 kfs_write_superblock(FILE * out, const char *fsname, uint32_t blk_cnt,
 		     uint32_t files_cnt)
 {
-	struct kfs_superblock sblock;
+	struct kfs_superblock sblock = {
+		.magic = KFS_MAGIC,
+		.ctime = time(NULL),
+		.blk_cnt = blk_cnt,
+		.inode_idx = 1,
+		.inode_cnt = files_cnt,
+		.cksum = 0
+	};
 
-	memset(&sblock, 0, sizeof(struct kfs_superblock));
-	sblock.magic = KFS_MAGIC;
 	strncpy(sblock.name, fsname, KFS_NAME_SZ);
-	sblock.ctime = time(NULL);
-	sblock.blk_cnt = blk_cnt;
-	sblock.inode_idx = 1;
-	sblock.inode_cnt = files_cnt;
 	sblock.cksum = kfs_checksum(&sblock, sizeof(struct kfs_superblock) - sizeof(sblock.cksum));
+
 	fseek(out, 0, SEEK_SET);
 	kfswrite(&sblock, sizeof(struct kfs_superblock), out);
 }
