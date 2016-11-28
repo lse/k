@@ -137,7 +137,7 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
 
 	/* write direct blocks */
 	for (i = 0; i < KFS_DIRECT_BLK && kfs_read_block(fp, &blk); ++blk_idx, ++i) {
-		pr_info("writing direct data block to offset %u\n", blk_idx * KFS_BLK_SZ);
+		pr_info("write direct data block to offset %u\n", blk_idx * KFS_BLK_SZ);
 
 		blk.idx = blk_idx;
 		blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
@@ -149,10 +149,9 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
 
 	/* write indirect blocks */
 	if (!feof(fp)) {
-		struct kfs_iblock iblock_idx;
 
 		for (i = 0; i < KFS_INDIRECT_BLK && !feof(fp); ++i) {
-			memset(&iblock_idx, 0, sizeof(iblock_idx));
+			struct kfs_iblock iblock_idx = { 0 };
 
 			pr_info("write indirect data blocks to index %u.\n", i);
 
