@@ -33,6 +33,8 @@
 
 #include <k/kfs.h>
 
+#define align_up(v, d)	((((v) + (d) - 1) / (d)) * (d))
+
 #define KFS_MAX_FILE_SZ ((KFS_DIRECT_BLK + KFS_INDIRECT_BLK * \
 			  KFS_INDIRECT_BLK_CNT) * KFS_BLK_DATA_SZ)
 
@@ -107,10 +109,6 @@ static ssize_t kfs_read_block(int fd, struct kfs_block *blk)
 static u32
 kfs_write_inode(int romfd, int fd, struct kfs_inode *inode, u32 blk_idx)
 {
-	pr_info("- writing inode %u\n", inode->inumber);
-	pr_info("writing data blocks to offset %u\n", blk_idx * KFS_BLK_SZ);
-
-	/* write direct blocks */
 	for (size_t i = 0; i < KFS_DIRECT_BLK; ++blk_idx, ++i) {
 		struct kfs_block blk = { 0 };
 
@@ -120,13 +118,12 @@ kfs_write_inode(int romfd, int fd, struct kfs_inode *inode, u32 blk_idx)
 		pr_info("write direct block to offset %u\n", blk_idx * KFS_BLK_SZ);
 
 		blk.idx = blk_idx;
-		blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
+		blk.cksum = kfs_checksum(&blk, sizeof(blk));
 
 		kfs_write(romfd, &blk, sizeof(blk), blk.idx);
 
-		inode->d_blks[i] = blk_idx;
+		inode->d_blks[i] = blk.idx;
 		inode->d_blk_cnt++;
-		inode->blk_cnt++;
 	}
 
 	for (size_t i = 0; i < KFS_INDIRECT_BLK; ++i) {
@@ -134,22 +131,21 @@ kfs_write_inode(int romfd, int fd, struct kfs_inode *inode, u32 blk_idx)
 
 		pr_info("write indirect data blocks to index %zu.\n", i);
 
-		/* fill indirect blocks */
-		for (size_t j = 0; j < KFS_INDIRECT_BLK_CNT; ++j) {
+		for (size_t j = 0; j < KFS_INDIRECT_BLK_CNT; ++blk_idx, ++j) {
 			struct kfs_block blk = { 0 };
 
 			if (!kfs_read_block(fd, &blk))
 				return blk_idx;
 
-			blk.idx = blk_idx++;
+			pr_info("writing indirect data block to offset %u\n", blk_idx * KFS_BLK_SZ);
+
+			blk.idx = blk_idx;
 			blk.cksum = kfs_checksum(&blk, sizeof(blk));
 
-			iblock_idx.blks[iblock_idx.blk_cnt++] = blk.idx;
-
-			pr_info("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
-
 			kfs_write(romfd, &blk, sizeof(blk), blk.idx);
-			inode->blk_cnt++;
+
+			iblock_idx.blks[j] = blk.idx;
+			iblock_idx.blk_cnt++;
 		}
 		iblock_idx.idx = blk_idx++;
 		iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(iblock_idx) - sizeof(iblock_idx.cksum));
@@ -187,8 +183,9 @@ kfs_write_files(int romfd, char **files, size_t nb_files, size_t blkoff)
 		struct kfs_inode inode = {
 			.idx = inode_off,
 			.next_inode = inode_off + 1,
-			.inumber = i + 1,
+			.inumber = i + 1, /* with this tool it will be the same as idx */
 			.file_sz = st.st_size,
+			.blk_cnt = align_up(st.st_size, KFS_BLK_DATA_SZ) / KFS_BLK_DATA_SZ,
 		};
 
 		strncpy(inode.filename, basename(files[i]), sizeof(inode.filename));
@@ -196,6 +193,9 @@ kfs_write_files(int romfd, char **files, size_t nb_files, size_t blkoff)
 		/* fix last inode */
 		if (i == nb_files - 1)
 			inode.next_inode = 0;
+
+		pr_info("- writing inode %u\n", inode.inumber);
+		pr_info("writing data blocks to offset %zu\n", blk_idx * KFS_BLK_SZ);
 
 		blk_idx = kfs_write_inode(romfd, fd, &inode, blk_idx);
 
