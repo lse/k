@@ -29,8 +29,8 @@ DEPS	= $(OBJS:.o=.d)
 
 all: $(TARGET)
 
-$(TARGET): CPPFLAGS = -MMD
-$(TARGET): CFLAGS = -I../../k/include/ -Wall -Wextra -Werror -std=c99
+$(TARGET): CPPFLAGS = -MMD -I../../k/include -D_GNU_SOURCE
+$(TARGET): CFLAGS = -Wall -Wextra -std=c99
 $(TARGET): LDFLAGS =
 $(TARGET): $(OBJS)
 

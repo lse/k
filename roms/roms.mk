@@ -16,6 +16,6 @@ clean:
 	$(RM) $(OBJS) $(DEPS) $(TARGET) $(TARGET).rom
 
 $(TARGET).rom: $(TARGET)
-	$(MKKFS) -r $@ -n $(ROM_TITLE) -f $(ROM_FILES)
+	$(MKKFS) -o $@ -n $(ROM_TITLE) $(ROM_FILES)
 
 -include $(DEPS)
