@@ -91,8 +91,7 @@ static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32
 	struct kfs_inode **inodes = calloc(nb_files + 1, sizeof(*inodes));
 
 	for (size_t i = 0; i < nb_files; ++i) {
-		inodes[i] = malloc(sizeof(struct kfs_inode));
-		memset(inodes[i], 0, sizeof(struct kfs_inode));
+		inodes[i] = calloc(1, sizeof(struct kfs_inode));
 		strncpy(inodes[i]->filename, basename(files[i]),
 			sizeof(inodes[i]->filename));
 
