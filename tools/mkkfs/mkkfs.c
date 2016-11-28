@@ -88,19 +88,17 @@ static struct kfs_block *kfs_read_block(FILE * fp, struct kfs_block *blk)
  */
 static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32_t off)
 {
-	struct kfs_inode **inodes;
-	uint32_t i;
+	struct kfs_inode **inodes = calloc(nb_files + 1, sizeof(*inodes));
 
-	inodes = calloc(nb_files + 1, sizeof(struct kfs_inode *));
-
-	for (i = 0; *files; ++i, ++files) {
+	for (size_t i = 0; i < nb_files; ++i) {
 		inodes[i] = malloc(sizeof(struct kfs_inode));
 		memset(inodes[i], 0, sizeof(struct kfs_inode));
-		strncpy(inodes[i]->filename, basename(*files), sizeof(inodes[i]->filename));
+		strncpy(inodes[i]->filename, basename(files[i]),
+			sizeof(inodes[i]->filename));
 
 		struct stat st;
-		if (stat(*files, &st) < 0)
-			err(1, "error stating file %s\n", *files);
+		if (stat(files[i], &st) < 0)
+			err(1, "error stating file %s\n", files[i]);
 
 		inodes[i]->file_sz = st.st_size;
 		inodes[i]->idx = off++;
@@ -108,7 +106,7 @@ static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32
 		inodes[i]->blk_cnt = 0;
 		inodes[i]->inumber = i + 1;
 	}
-	inodes[i - 1]->next_inode = 0;
+	inodes[nb_files - 1]->next_inode = 0;
 
 	return inodes;
 }
@@ -202,10 +200,10 @@ kfs_write_files(FILE * out, char **files, size_t nb_files, size_t blkoff)
 
 	pr_info("%zu inodes will be written.\n", nb_files);
 
-	for (i = 0; *files; ++i, ++files) {
-		FILE *fp = fopen(*files, "r");
+	for (i = 0; i < nb_files; ++i) {
+		FILE *fp = fopen(files[i], "r");
 		if (!fp) {
-			err(1, "error opening file %s in read mode", *files);
+			err(1, "error opening file %s in read mode", files[i]);
 			return 0;
 		}
 		blk_idx = kfs_write_inode(out, fp, inodes[i], blk_idx);
