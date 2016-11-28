@@ -27,6 +27,7 @@
 #include "console.h"
 #include "init.h"
 #include "multiboot.h"
+#include "syscall.h"
 
 void k_main(unsigned long magic, multiboot_info_t *info)
 {

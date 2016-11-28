@@ -141,6 +141,8 @@ enum e_mouse_codes {
 #define SYSCALL_GETMOUSE		12 /* XXX: not implemented */
 #define SYSCALL_GETKEYMODE		13
 
+#define NR_SYSCALL			(SYSCALL_GETKEYMODE + 1)
+
 int write(const void *s, size_t length);
 void *sbrk(ssize_t increment);
 int getkey(void);
