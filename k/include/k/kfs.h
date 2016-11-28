@@ -67,6 +67,15 @@ struct kfs_inode {
 	u32 cksum;
 } __packed;
 
+struct kfs_blk {
+	union {
+		struct kfs_block blk;
+		struct kfs_iblock iblk;
+		struct kfs_inode ino;
+		u8 whole_blk[KFS_BLK_SZ];
+	};
+};
+
 struct kfs_superblock {
 	u32 magic;
 	char name[KFS_NAME_SZ];
