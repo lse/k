@@ -21,39 +21,31 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
+#include <err.h>
 #include <stdint.h>
-#include <time.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
-#include <errno.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <k/kfs.h>
 
-#define kfswrite(Buf, Sz, Nm, S) \
-  do { \
-    if (!fwrite (Buf, Sz, Nm, S)) { \
-      fprintf (stderr, "error writing to file\n"); \
-      fclose (S); \
-      exit (EXIT_FAILURE); \
-    } \
-  } \
-  while (0)
+#define kfswrite(Buf, Sz, S) \
+	do { \
+		if (!fwrite (Buf, Sz, 1, S)) \
+			err(1, "error writing to file\n"); \
+	} while (0)
 
-#define OPT_VERBOSE (1 << 0)
+static int verbose;
 
-static int _opt = 0;
-
-static inline int is_opt(const char *str)
-{
-	return !strcmp(str, "-v")
-		|| !strcmp(str, "-r")
-		|| !strcmp(str, "-n")
-		|| !strcmp(str, "-f")
-		|| !strcmp(str, "-b");
-}
+#define pr_info(fmt, ...) \
+	do { \
+		if (verbose) { \
+			printf("[+] " fmt, __VA_ARGS__); \
+		} \
+	} while (0)
 
 /**
  * @brief Write superblock to rom.
@@ -73,7 +65,7 @@ kfs_write_superblock(FILE * out, const char *fsname, uint32_t blk_cnt,
 	sblock.inode_cnt = files_cnt;
 	sblock.cksum = kfs_checksum(&sblock, sizeof(struct kfs_superblock) - sizeof(sblock.cksum));
 	fseek(out, 0, SEEK_SET);
-	kfswrite(&sblock, sizeof(struct kfs_superblock), 1, out);
+	kfswrite(&sblock, sizeof(struct kfs_superblock), out);
 }
 
 /**
@@ -102,7 +94,7 @@ static struct kfs_inode **kfs_alloc_inodes(char **argv, uint32_t off, uint32_t *
 	uint32_t i;
 	char **ptr;
 
-	for (ptr = argv; *ptr && !is_opt(*ptr); ++ptr)
+	for (ptr = argv; *ptr; ++ptr)
 		continue;
 	*inode_cnt = ptr - argv;
 	inodes = calloc((*inode_cnt + 1), sizeof(struct kfs_inode *));
@@ -112,10 +104,9 @@ static struct kfs_inode **kfs_alloc_inodes(char **argv, uint32_t off, uint32_t *
 		memset(inodes[i], 0, sizeof(struct kfs_inode));
 		strncpy(inodes[i]->filename, *argv, sizeof(inodes[i]->filename));
 
-		if (stat(*argv, &st) < 0) {
-			fprintf(stderr, "error stating file %s: %s\n", *argv, strerror(errno));
-			return NULL;
-		}
+		if (stat(*argv, &st) < 0)
+			err(1, "error stating file %s\n", *argv);
+
 		inodes[i]->file_sz = st.st_size;
 		inodes[i]->idx = off++;
 		inodes[i]->next_inode = off;
@@ -138,21 +129,20 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
 	struct kfs_block blk;
 	uint32_t i, j;
 
-	if (_opt & OPT_VERBOSE) {
-		printf("- writing inode %u\n", inode->inumber);
-		printf("writing data blocks to offset %u\n", blk_idx * KFS_BLK_SZ);
-	}
+	pr_info("- writing inode %u\n", inode->inumber);
+	pr_info("writing data blocks to offset %u\n", blk_idx * KFS_BLK_SZ);
+
 	/* set file position to correct block */
 	fseek(out, blk_idx * KFS_BLK_SZ, SEEK_SET);
 
 	/* write direct blocks */
 	for (i = 0; i < KFS_DIRECT_BLK && kfs_read_block(fp, &blk); ++blk_idx, ++i) {
 		blk.idx = blk_idx;
-		if (_opt & OPT_VERBOSE)
-			printf("writing direct data block to offset %u\n", blk_idx * KFS_BLK_SZ);
+
+		pr_info("writing direct data block to offset %u\n", blk_idx * KFS_BLK_SZ);
 
 		blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
-		kfswrite(&blk, sizeof(struct kfs_block), 1, out);
+		kfswrite(&blk, sizeof(struct kfs_block), out);
 		inode->d_blks[i] = blk_idx;
 		inode->d_blk_cnt++;
 	}
@@ -164,8 +154,8 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
 
 		for (i = 0; i < KFS_INDIRECT_BLK && !feof(fp); ++i) {
 			memset(&iblock_idx, 0, sizeof(iblock_idx));
-			if (_opt & OPT_VERBOSE)
-				printf("writing indirect data blocks to index %u.\n", i);
+
+			pr_info("writing indirect data blocks to index %u.\n", i);
 
 			/* fill indirect blocks */
 			for (j = 0; j < KFS_INDIRECT_BLK_CNT; ++j) {
@@ -175,31 +165,30 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
 				blk.idx = blk_idx++;
 				blk.cksum = kfs_checksum(&blk, sizeof(struct kfs_block));
 				iblock_idx.blks[iblock_idx.blk_cnt++] = blk.idx;
-				if (_opt & OPT_VERBOSE) {
-					printf("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
-				}
-				kfswrite(&blk, sizeof(struct kfs_block), 1, out);
+
+				pr_info("writing indirect data block to offset %u\n", blk.idx * KFS_BLK_SZ);
+
+				kfswrite(&blk, sizeof(struct kfs_block), out);
 			}
 			inode->blk_cnt += j;
 			iblock_idx.idx = blk_idx++;
 			inode->i_blks[i] = iblock_idx.idx;
 			iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(struct kfs_iblock) - sizeof(iblock_idx.cksum));
-			kfswrite(&iblock_idx, sizeof(struct kfs_iblock), 1, out);
+			kfswrite(&iblock_idx, sizeof(struct kfs_iblock), out);
 			fseek(out, blk_idx * KFS_BLK_SZ, SEEK_SET);
 		}
 		inode->i_blk_cnt = i;
 		if (!feof(fp)) {
-			fprintf(stderr, "file is too large to be written to kfs\n");
+			errx(1, "file is too large to be written to kfs");
 			return 0;
 		}
 	}
 	inode->cksum = kfs_checksum(inode, sizeof(struct kfs_inode) - sizeof(inode->cksum));
 	/* seek to correct inode position in order to write it */
-	if (_opt & OPT_VERBOSE)
-		printf("writing inode to offset %u\n", inode->idx * KFS_BLK_SZ);
+	pr_info("writing inode to offset %u\n", inode->idx * KFS_BLK_SZ);
 
 	fseek(out, inode->idx * KFS_BLK_SZ, SEEK_SET);
-	kfswrite(inode, sizeof(struct kfs_inode), 1, out);
+	kfswrite(inode, sizeof(struct kfs_inode), out);
 
 	return blk_idx;
 }
@@ -217,13 +206,12 @@ kfs_write_files(FILE * out, char **files, size_t blkoff, uint32_t * inode_cnt)
 	}
 	size_t blk_idx = *inode_cnt + 1;
 
-	if (_opt & OPT_VERBOSE)
-		printf("%u inodes will be written.\n", *inode_cnt);
+	pr_info("%u inodes will be written.\n", *inode_cnt);
 
 	for (i = 0; *files; ++i, ++files) {
 		FILE *fp = fopen(*files, "r");
 		if (!fp) {
-			fprintf(stderr, "error opening file %s in read mode: %s\n", *files, strerror(errno));
+			err(1, "error opening file %s in read mode", *files);
 			return 0;
 		}
 		blk_idx = kfs_write_inode(out, fp, inodes[i], blk_idx);
@@ -234,80 +222,65 @@ kfs_write_files(FILE * out, char **files, size_t blkoff, uint32_t * inode_cnt)
 
 static inline void usage(void)
 {
-	printf("usage: mkkfs [-v] -r rom_file -n name -f "
-	       "file_1 file_2 ... file_n\n");
+	extern const char *__progname;
+
+	fprintf(stderr, "usage: %s [-v] [-n name] -o rom_file files...\n", __progname);
+
+	exit(1);
 }
 
 int main(int argc, char **argv)
 {
-	char **ptr, **files, *rom_file, *rom_name;
+	char *rom_file = NULL;
+	char *rom_name = NULL;
+	int opt;
 
-	if (argc < 3) {
-		usage();
-		return EXIT_FAILURE;
-	}
-	ptr = files = NULL;
-	rom_file = rom_name = NULL;
-
-	/* parse command line. */
-	for (ptr = ++argv; *ptr;) {
-		if (**ptr == '-') {
-			if (!strcmp(*ptr, "-v")) {
-				_opt |= OPT_VERBOSE;
-				++ptr;
-				continue;
-			}
-			if (!strcmp(*ptr, "-f")) {
-				if (!ptr[1] || is_opt(ptr[1])) {
-					fprintf(stderr, "-f option must be followed by file names.\n");
-					exit(EXIT_FAILURE);
-				}
-				files = ptr + 1;
-				for (++ptr; *ptr && !is_opt(*ptr); ++ptr) ;
-				continue;
-			}
-			if (!strcmp(*ptr, "-r")) {
-				if (!ptr[1] || is_opt(ptr[1])) {
-					fprintf(stderr, "-r option must be followed by file name.\n");
-					exit(EXIT_FAILURE);
-				}
-				rom_file = ptr[1];
-				ptr += 2;
-				continue;
-			}
-			if (!strcmp(*ptr, "-n")) {
-				if (!ptr[1] || is_opt(ptr[1])) {
-					fprintf(stderr, "-n option must be followed by file system name.\n");
-					exit(EXIT_FAILURE);
-				}
-				rom_name = ptr[1];
-				ptr += 2;
-				continue;
-			}
+	while ((opt = getopt(argc, argv, "n:o:v")) != -1) {
+		switch (opt) {
+		case 'n':
+			rom_name = optarg;
+			break;
+		case 'o':
+			rom_file = optarg;
+			break;
+		case 'v':
+			verbose = 1;
+			break;
+		default:
+			usage();
+			break;
 		}
-		fprintf(stderr, "invalid option %s.\n", *ptr);
-		exit(EXIT_FAILURE);
 	}
-	if (!files || !rom_file || !rom_name) {
-		fprintf(stderr, "missing argument.\n");
+
+	argc -= optind;
+	argv += optind;
+
+	char **files = argv;
+	size_t nb_files = argc;
+
+	if (nb_files < 1)
 		usage();
-		exit(EXIT_FAILURE);
-	}
+
+	if (!rom_file)
+		usage();
+
+	if (!rom_name)
+		rom_name = rom_file;
+
 	FILE *rom = fopen(rom_file, "w");
 	if (!rom) {
-		fprintf(stderr, "error opening file %s for writing: %s\n", rom_file, strerror(errno));
-		return EXIT_FAILURE;
+		err(1, "error opening file %s for writing", rom_file);
+		return 1;
 	}
-	if (_opt & OPT_VERBOSE)
-		printf("block size: %u\n", KFS_BLK_SZ);
+	pr_info("block size: %u\n", KFS_BLK_SZ);
 
 	uint32_t blk_cnt, inode_cnt;
 	if (!(blk_cnt = kfs_write_files(rom, files, 1, &inode_cnt))) {
 		fclose(rom);
-		return EXIT_FAILURE;
+		return 1;
 	}
 	kfs_write_superblock(rom, rom_name, blk_cnt, inode_cnt);
 	fclose(rom);
 
-	return EXIT_SUCCESS;
+	return 0;
 }
