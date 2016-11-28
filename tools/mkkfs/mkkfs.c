@@ -198,7 +198,7 @@ kfs_write_files(FILE * out, char **files, size_t nb_files, size_t blkoff)
 	if (!inodes) {
 		return 0;
 	}
-	size_t blk_idx = nb_files + 1;
+	size_t blk_idx = nb_files + blkoff;
 
 	pr_info("%zu inodes will be written.\n", nb_files);
 
