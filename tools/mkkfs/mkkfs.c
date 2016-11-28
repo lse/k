@@ -59,7 +59,7 @@ static void *xcalloc(size_t nmemb, size_t sz)
  * @brief Write superblock to rom.
  */
 static void
-kfs_write_superblock(FILE * out, const char *fsname, uint32_t blk_cnt,
+kfs_write_superblock(FILE *out, const char *fsname, uint32_t blk_cnt,
 		     uint32_t files_cnt)
 {
 	struct kfs_superblock sblock = {
@@ -83,7 +83,7 @@ kfs_write_superblock(FILE * out, const char *fsname, uint32_t blk_cnt,
  *    fill kfs_block structure.
  * @return filled kfs_block or NULL if EOF reached.
  */
-static struct kfs_block *kfs_read_block(FILE * fp, struct kfs_block *blk)
+static struct kfs_block *kfs_read_block(FILE *fp, struct kfs_block *blk)
 {
 	memset(blk, 0, sizeof(struct kfs_block));
 	if (!(blk->usage = fread(blk->data, 1, sizeof(blk->data), fp)))
@@ -124,7 +124,7 @@ static struct kfs_inode **kfs_alloc_inodes(char **files, size_t nb_files, uint32
  * @return the next available block index;
  */
 static uint32_t
-kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx)
+kfs_write_inode(FILE *out, FILE *fp, struct kfs_inode *inode, uint32_t blk_idx)
 {
 	struct kfs_block blk;
 	uint32_t i, j;
@@ -194,7 +194,7 @@ kfs_write_inode(FILE * out, FILE * fp, struct kfs_inode *inode, uint32_t blk_idx
  * @brief Write every file to rom from blkoff offset.
  */
 static uint32_t
-kfs_write_files(FILE * out, char **files, size_t nb_files, size_t blkoff)
+kfs_write_files(FILE *out, char **files, size_t nb_files, size_t blkoff)
 {
 	struct kfs_inode **inodes = kfs_alloc_inodes(files, nb_files, blkoff);
 
