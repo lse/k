@@ -47,9 +47,9 @@ OBJS	= \
 	  vga.o \
 	  write.o \
 
-CPPFLAGS += -MMD -Iinclude -I ../sdk/libc/include/
+CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
 LDFLAGS += -Wl,-Tk.lds
-LDLIBS = -L../sdk/libc -lc
+LDLIBS = -L../libs/libc -lc
 
 DEPS = $(OBJS:.o=.d)
 
