@@ -24,6 +24,8 @@
 #ifndef LIBVGA_H
 #define LIBVGA_H
 
+#include <stddef.h>
+
 #define VGA_AC_INDEX		0x3C0
 #define VGA_AC_WRITE		0x3C0
 #define VGA_AC_READ		0x3C1
@@ -47,7 +49,7 @@
 #define VGA_NUM_GC_REGS	9
 #define VGA_NUM_AC_REGS	21
 
-void libvga_set_palette(unsigned int *new_palette, unsigned int size);
+void libvga_set_palette(unsigned int *new_palette, size_t size);
 
 char *libvga_get_framebuffer(void);
 

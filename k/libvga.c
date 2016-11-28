@@ -21,6 +21,7 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+#include "compiler.h"
 #include "libvga.h"
 #include "libvga_io.h"
 
@@ -195,20 +196,17 @@ static void libvga_write_regs(unsigned char *regs)
 
 	/* write the default palette to the DAC */
 	OUTB(VGA_DAC_MASK, 0xFF);
-	libvga_set_palette(libvga_default_palette, 256);
+	libvga_set_palette(libvga_default_palette, array_size(libvga_default_palette));
 }
 
-void libvga_set_palette(unsigned int *new_palette, unsigned int size)
+void libvga_set_palette(unsigned int *new_palette, size_t size)
 {
-	unsigned int i;
-
 	OUTB(VGA_DAC_WRITE_INDEX, 0);
-	for (i = 0; i < size; i++) {
+	for (size_t i = 0; i < size; i++) {
 		OUTB(VGA_DAC_DATA, ((new_palette[i] >> 16) >> 2) & 0xFF);
 		OUTB(VGA_DAC_DATA, ((new_palette[i] >> 8) >> 2) & 0xFF);
 		OUTB(VGA_DAC_DATA, ((new_palette[i]) >> 2) & 0xFF);
 	}
-
 }
 
 char *libvga_get_framebuffer(void)
@@ -233,25 +231,19 @@ char *libvga_get_framebuffer(void)
 
 void libvga_switch_mode13h(void)
 {
-	char *vram;
-	int i;
-
 	libvga_write_regs(libvga_regs_320x200x256);
 
 	// plane 2 is now map in the memory, save it
-	vram = libvga_get_framebuffer();
-	for (i = 0; i < 320 * 200; i++)
+	char *vram = libvga_get_framebuffer();
+	for (size_t i = 0; i < array_size(libvga_txt_mode_font); i++)
 		libvga_txt_mode_font[i] = vram[i];
 }
 
 void libvga_switch_mode3h(void)
 {
-	char *vram;
-	int i;
-
 	// restore the VGA plane 2 to the text font
-	vram = libvga_get_framebuffer();
-	for (i = 0; i < 320 * 200; i++)
+	char *vram = libvga_get_framebuffer();
+	for (size_t i = 0; i < array_size(libvga_txt_mode_font); i++)
 		vram[i] = libvga_txt_mode_font[i];
 
 	libvga_write_regs(libvga_regs_80x25xtext);
