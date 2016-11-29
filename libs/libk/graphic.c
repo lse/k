@@ -626,7 +626,7 @@ t_anim *load_anim(char *paths, int delay)
 		p++;
 
 		if (!(anim->imgs[i] = load_image(filename)))
-			blue_screen("failed to load skater image");
+			blue_screen("failed to load animation");
 	}
 
 	return anim;
