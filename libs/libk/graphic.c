@@ -341,7 +341,7 @@ void draw_pixel(unsigned int x, unsigned int y, t_color color)
 	offbuffer[y * GRAPHIC_WIDTH + x] = color;
 }
 
-int abs(int a)
+static int abs(int a)
 {
 	if (a < 0)
 		return -a;
