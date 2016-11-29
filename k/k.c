@@ -43,7 +43,7 @@ void k_main(unsigned long magic, multiboot_info_t *info)
 
 	init_pm();
 	init_interrupt();
-	init_syscall();
+	init_syscall(/* enable_tracing= */ 0);
 
 	init_pic();
 	init_kbd();
