@@ -54,7 +54,8 @@ all: $(TARGET)
 
 $(TARGET): CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
 $(TARGET): LDFLAGS += -Wl,-Tk.lds
-$(TARGET): LDLIBS = -L../libs/libc -lc
+$(TARGET): LDLIBS = write.sym -L../libs/libc -lc
+$(TARGET): write.sym
 $(TARGET): $(OBJS)
 
 clean:
