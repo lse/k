@@ -102,44 +102,106 @@ enum e_colors {
 	ORANGE = 23
 };
 
+/*
+ * this function switches to graphic mode.
+ */
 void switch_graphic(void);
 
+/*
+ * this function get back to text mode.
+ */
 void switch_text(void);
 
+/*
+ * call this function at the beginning of drawing a frame.
+ */
 void draw_begin(void);
 
+/*
+ * call this function when finished drawing. this is the function that
+ * copy your buffered draw from off-screen buffer to framebuffer.
+ */
 void draw_end(void);
 
+/*
+ * clears the screen with given color.
+ */
 void draw_clear(t_color color);
 
+/*
+ * this function plot a pixel of given color at given position.
+ */
 void draw_pixel(unsigned int x, unsigned int y, t_color color);
 
+/*
+ * draw a line.
+ */
 void draw_line(unsigned int x1, unsigned int y1,
 	       unsigned int x2, unsigned int y2, t_color color);
 
+/*
+ * draw an empty rectangle.
+ */
 void draw_rect(unsigned int x1, unsigned int y1,
 	       unsigned int x2, unsigned int y2, t_color color);
 
+/*
+ * draw a solid rectangle.
+ */
 void draw_fillrect(unsigned int x1, unsigned int y1,
 		   unsigned int x2, unsigned int y2,
 		   t_color color, t_color interior);
 
+/*
+ * load a Windows BITMAP (BMP) from file.
+ * the only supported files are 8 bits per pixels paletted.
+ * the only supported palette is the default one (obtained with Paint).
+ */
 t_image *load_image(const char *path);
 
+/*
+ * destroy a loaded image.
+ */
 void clear_image(t_image * image);
 
+/*
+ * display a loaded image with transparency.
+ */
 void draw_image_alpha(t_image * image,
 		      unsigned int x, unsigned int y, unsigned int alpha);
 
+/*
+ * display a loaded image.
+ */
 void draw_image(t_image * image, unsigned int x, unsigned int y);
 
+/*
+ * draw some text.
+ */
 void draw_text(const char *s,
 	       unsigned int x, unsigned int y, t_color fg, t_color bg);
 
+/*
+ * load an animation.
+ * paths is string containing the images name separated by a space.
+ * load_anim supports the same image formats as load_image.
+ * delay is the displaying time of each image (in ticks).
+ *
+ * invocation example: load_anim("pic1 pic2 pic3 pic4 pic5", PIC_ANIM_DELAY);
+ */
 t_anim *load_anim(char *paths, int delay);
 
+/*
+ * draw an animation at coordinates (x, y)
+ *
+ * jiffies is the reference ticks counter which should
+ * be incremented at every timer tick.
+ */
 void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies);
 
+/*
+ * video blue screen.
+ */
 void blue_screen(const char *message);
 
 #endif				/* !GRAPHIC_H_ */
