@@ -301,20 +301,12 @@ static unsigned char font[2048] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-/*
- * this function switches to graphic mode.
- */
-
 void switch_graphic(void)
 {
 	if (setvideo(VIDEO_GRAPHIC))
 		blue_screen("Unable to switch to graphic mode");
 	offbuffer = malloc(FB_SIZE);
 }
-
-/*
- * this function get back to text mode.
- */
 
 void switch_text(void)
 {
@@ -323,19 +315,10 @@ void switch_text(void)
 	//free (offbuffer);
 }
 
-/*
- * call this function at the beginning of drawing a frame.
- */
-
 void draw_begin(void)
 {
 	draw_clear(CONS_BLACK);
 }
-
-/*
- * call this function when finished drawing. this is the function that
- * copy your buffered draw from off-screen buffer to framebuffer.
- */
 
 void draw_end(void)
 {
@@ -343,18 +326,10 @@ void draw_end(void)
 	/*memcpy (framebuffer, offbuffer, FB_SIZE); */
 }
 
-/*
- * clears the screen with given color.
- */
-
 void draw_clear(t_color color)
 {
 	memset(offbuffer, color, FB_SIZE);
 }
-
-/*
- * this function plot a pixel of given color at given position.
- */
 
 void draw_pixel(unsigned int x, unsigned int y, t_color color)
 {
@@ -365,10 +340,6 @@ void draw_pixel(unsigned int x, unsigned int y, t_color color)
 
 	offbuffer[y * GRAPHIC_WIDTH + x] = color;
 }
-
-/*
- * draw a line.
- */
 
 int abs(int a)
 {
@@ -444,10 +415,6 @@ void draw_line(unsigned int x1, unsigned int y1,
 	}
 }
 
-/*
- * draw an empty rectangle.
- */
-
 void draw_rect(unsigned int x1, unsigned int y1,
 	       unsigned int x2, unsigned int y2, t_color color)
 {
@@ -463,10 +430,6 @@ void draw_rect(unsigned int x1, unsigned int y1,
 		draw_pixel(x2, y, color);
 	}
 }
-
-/*
- * draw a solid rectangle.
- */
 
 void draw_fillrect(unsigned int x1, unsigned int y1,
 		   unsigned int x2, unsigned int y2,
@@ -487,12 +450,6 @@ void draw_fillrect(unsigned int x1, unsigned int y1,
 		for (y = y1 + 1; y < y2 && y < GRAPHIC_HEIGHT; y++)
 			draw_pixel(x, y, interior);
 }
-
-/*
- * load a Windows BITMAP (BMP) from file.
- * the only supported files are 8 bits per pixels paletted.
- * the only supported palette is the default one (obtained with Paint).
- */
 
 t_image *load_image(const char *path)
 {
@@ -555,10 +512,6 @@ t_image *load_image(const char *path)
 	return img;
 }
 
-/*
- * destroy a loaded image.
- */
-
 void clear_image(t_image * image)
 {
 	unsigned int i;
@@ -568,10 +521,6 @@ void clear_image(t_image * image)
 	free(image->data);
 	free(image);
 }
-
-/*
- * display a loaded image with transparency.
- */
 
 void draw_image_alpha(t_image * image,
 		      unsigned int x, unsigned int y, unsigned int alpha)
@@ -594,10 +543,6 @@ void draw_image_alpha(t_image * image,
 		}
 }
 
-/*
- * display a loaded image.
- */
-
 void draw_image(t_image * image, unsigned int x, unsigned int y)
 {
 	draw_image_alpha(image, x, y, -1);
@@ -614,10 +559,6 @@ static int bit_on(char c, int n)
 	mask = 1 << (7 - n);
 	return c & mask;
 }
-
-/*
- * draw some text.
- */
 
 void draw_text(const char *s,
 	       unsigned int x, unsigned int y, t_color fg, t_color bg)
@@ -645,15 +586,6 @@ void draw_text(const char *s,
 			}
 	}
 }
-
-/*
- * load an animation.
- * paths is string containing the images name separated by a space.
- * load_anim supports the same image formats as load_image.
- * delay is the displaying time of each image (in ticks).
- *
- * invocation example: load_anim("pic1 pic2 pic3 pic4 pic5", PIC_ANIM_DELAY);
- */
 
 t_anim *load_anim(char *paths, int delay)
 {
@@ -700,13 +632,6 @@ t_anim *load_anim(char *paths, int delay)
 	return anim;
 }
 
-/*
- * draw an animation at coordinates (x, y)
- *
- * jiffies is the reference ticks counter which should
- * be incremented at every timer tick.
- */
-
 void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies)
 {
 	if (anim->jiffies + anim->delay <= jiffies || anim->jiffies > jiffies) {
@@ -717,12 +642,7 @@ void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies)
 	draw_image_alpha(anim->imgs[anim->current_img], x, y, 0);
 }
 
-////////////////////
 extern unsigned char *framebuffer;
-
-/*
- * console blue screen.
- */
 
 static void blue_screen_cons(const char *message)
 {
@@ -762,10 +682,6 @@ static void blue_screen_cons(const char *message)
 
 	while (1) ;
 }
-
-/*
- * video blue screen.
- */
 
 static void blue_screen_fb(const char *message)
 {
