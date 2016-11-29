@@ -323,7 +323,6 @@ void draw_begin(void)
 void draw_end(void)
 {
 	swap_frontbuffer(offbuffer);
-	/*memcpy (framebuffer, offbuffer, FB_SIZE); */
 }
 
 void draw_clear(t_color color)
@@ -534,12 +533,6 @@ void draw_image_alpha(t_image * image,
 			    || (alpha != image->data[i][j]))
 				draw_pixel(x + j, y + image->height - i,
 					   image->data[i][j]);
-
-			//if (image->data[i][j] != alpha)
-			//    if ((x + j) < GRAPHIC_WIDTH)
-			//if ((y + i) < GRAPHIC_HEIGHT)
-			//offbuffer[(y + (image->height - i - 1)) * GRAPHIC_WIDTH + x + j] =
-			//      image->data[i][j];
 		}
 }
 
