@@ -30,7 +30,7 @@
  * framebuffer pointer.
  */
 
-unsigned char *framebuffer = NULL;
+static unsigned char *framebuffer = NULL;
 
 /*
  * offscreen buffer (for double buffering).
@@ -641,8 +641,6 @@ void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies)
 
 	draw_image_alpha(anim->imgs[anim->current_img], x, y, 0);
 }
-
-extern unsigned char *framebuffer;
 
 static void blue_screen_cons(const char *message)
 {
