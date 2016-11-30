@@ -24,19 +24,11 @@
 #include <graphic.h>
 #include <stdlib.h>
 
-/* this file should really be cleaned :) */
-
-/*
- * framebuffer pointer.
- */
-
-static unsigned char *framebuffer = NULL;
-
 /*
  * offscreen buffer (for double buffering).
  */
 
-static unsigned char *offbuffer = NULL;
+static unsigned char offbuffer[FB_SIZE];
 
 /*
  * the font is composed of 8*8 characters.
@@ -300,20 +292,6 @@ static unsigned char font[2048] = {
 	0x00, 0x00, 0x3C, 0x3C, 0x3C, 0x3C, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-
-void switch_graphic(void)
-{
-	if (setvideo(VIDEO_GRAPHIC))
-		blue_screen("Unable to switch to graphic mode");
-	offbuffer = malloc(FB_SIZE);
-}
-
-void switch_text(void)
-{
-	if (setvideo(VIDEO_TEXT))
-		blue_screen("Unable to switch to text mode");
-	//free (offbuffer);
-}
 
 void draw_begin(void)
 {
@@ -696,14 +674,18 @@ static void blue_screen_fb(const char *message)
 		continue;
 }
 
-/*
- * blue screen !
- */
+void (*blue_screen)(const char *message) = blue_screen_cons;
 
-void blue_screen(const char *message)
+void switch_graphic(void)
 {
-	if (framebuffer)
-		blue_screen_fb(message);
-	else
-		blue_screen_cons(message);
+	if (setvideo(VIDEO_GRAPHIC))
+		blue_screen("Unable to switch to graphic mode");
+	blue_screen = blue_screen_fb;
+}
+
+void switch_text(void)
+{
+	if (setvideo(VIDEO_TEXT))
+		blue_screen("Unable to switch to text mode");
+	blue_screen = blue_screen_cons;
 }
