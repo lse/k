@@ -36,7 +36,7 @@
  */
 #define GRAPHIC_WIDTH	320
 #define GRAPHIC_HEIGHT	200
-#define FB_SIZE	64000
+#define FB_SIZE		(GRAPHIC_WIDTH * GRAPHIC_HEIGHT)
 #define PALETTE_SIZE	256
 
 /*
@@ -202,6 +202,6 @@ void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies);
 /*
  * video blue screen.
  */
-void blue_screen(const char *message);
+extern void (*blue_screen)(const char *message);
 
 #endif				/* !GRAPHIC_H_ */
