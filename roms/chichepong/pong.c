@@ -31,7 +31,7 @@
 static void splash_screen(void)
 {
 	unsigned long t;
-	t_image *img = load_image("/chiche.bmp");
+	struct image *img = load_image("/chiche.bmp");
 	int blink = 0;
 	struct melody *intro = load_sound("/intro.ksf");
 
@@ -73,7 +73,7 @@ static void splash_screen(void)
 static void game_loop(void)
 {
 	unsigned long t;
-	t_image *ball = load_image("/ball.bmp");
+	struct image *ball = load_image("/ball.bmp");
 	int player1;
 	int player2;
 	int x, y;

@@ -32,7 +32,7 @@
 static void splash_screen(void)
 {
 	unsigned long t;
-	t_image *img = load_image("/yaka.bmp");
+	struct image *img = load_image("/yaka.bmp");
 	int blink = 0;
 	struct melody *intro = load_sound("/intro.csf");
 
@@ -74,8 +74,8 @@ static void splash_screen(void)
 static void game_loop(void)
 {
 	unsigned long t;
-	t_image *nuage = load_image("/nuage.bmp");
-	t_image *sol = load_image("/sol.bmp");
+	struct image *nuage = load_image("/nuage.bmp");
+	struct image *sol = load_image("/sol.bmp");
 	int angle = 45;
 	int x = 0;
 	int y = 0;
@@ -83,7 +83,7 @@ static void game_loop(void)
 	int dy = 0;
 	int k;
 	struct melody *sound = load_sound("/ball.csf");
-	t_image *pic[8];
+	struct image *pic[8];
 	int fire = 0;
 	int power = 0;
 	int fx = 0;
