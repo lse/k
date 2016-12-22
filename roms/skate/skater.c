@@ -24,7 +24,7 @@
 #include "skate.h"
 
 t_skater skater;
-t_anim *anim[7];
+struct anim *anim[7];
 int score = 0;
 int score_tmp = 0;
 

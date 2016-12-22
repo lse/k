@@ -37,8 +37,8 @@ typedef struct monster {
 static int splash_screen(void)
 {
 	unsigned long t;
-	t_image *imgchiche = load_image("/chiche_big.bmp");
-	t_image *imgchef = load_image("/chef_big.bmp");
+	struct image *imgchiche = load_image("/chiche_big.bmp");
+	struct image *imgchef = load_image("/chef_big.bmp");
 	int blink = 0;
 	struct melody *intro = load_sound("/intro.csf");
 	int sel = 1;
@@ -108,7 +108,7 @@ static int splash_screen(void)
  * game loop.
  */
 
-static void game_loop(t_image * img)
+static void game_loop(struct image * img)
 {
 	unsigned long t;
 	int p;
@@ -127,7 +127,7 @@ static void game_loop(t_image * img)
 	int win = 0;
 	int dead_monsters = 0;
 	int kill_seine_w = 0;
-	t_image *imgw = load_image("/seine_w.bmp");
+	struct image *imgw = load_image("/seine_w.bmp");
 	struct melody *sound = load_sound("/ball.csf");
 
 	if (!img)
