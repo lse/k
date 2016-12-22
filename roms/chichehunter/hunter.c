@@ -31,8 +31,8 @@
 static int splash_screen(void)
 {
 	unsigned long t;
-	t_image *imgchiche = load_image("/chiche_big.bmp");
-	t_image *imgchef = load_image("/chef_big.bmp");
+	struct image *imgchiche = load_image("/chiche_big.bmp");
+	struct image *imgchef = load_image("/chef_big.bmp");
 	int blink = 0;
 	struct melody *intro = load_sound("/intro.csf");
 	int sel = 1;
@@ -105,7 +105,7 @@ static int splash_screen(void)
  * game loop.
  */
 
-static void game_loop(t_image * img)
+static void game_loop(struct image * img)
 {
 	unsigned long t;
 	int px, py;
@@ -136,7 +136,7 @@ static void game_loop(t_image * img)
 	int dead_monsters = 0;
 	struct melody *sound = load_sound("/ball.csf");
 	int mouse_x, mouse_y, buttons;
-	t_image *bush = load_image("/bush.bmp");
+	struct image *bush = load_image("/bush.bmp");
 	char score[] =
 	    { 'S', 'C', 'O', 'R', 'E', ':', ' ', 'X', 'X', '/', 'X', 'X', 0 };
 	int choot, can_choot;

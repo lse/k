@@ -44,53 +44,35 @@
  * manipulate images.
  */
 
-typedef struct {
+struct image {
 	unsigned int width;
 	unsigned int height;
 	unsigned char **data;
-} t_image;
+};
 
 /*
  * animation structure.
  *
  */
 
-typedef struct {
+struct anim {
 	int nr_img;
 	int current_img;
 	unsigned long delay;
 	unsigned long jiffies;
-	t_image **imgs;
-} t_anim;
+	struct image **imgs;
+};
 
-/*
- * Windows BMP file header.
- */
-
-typedef struct {
-	char signature[2];
-	unsigned long filesize;
-	unsigned long reserved1;
-	unsigned long offset;
-	unsigned long reserved2;
-	unsigned long width;
-	unsigned long height;
-	unsigned short planes;
-	unsigned short bpp;
-	unsigned long reserved3;
-	unsigned long size;
-	char reserved[16];
-} __attribute__ ((packed)) t_bitmap_header;
 
 /*
  * a color is an index in the palette.
  */
-typedef unsigned int t_color;
+typedef unsigned int color_t;
 
 /*
  * some colors.
  */
-enum e_colors {
+enum colors {
 	BLACK = 0,
 	WHITE = 255,
 	RED = 249,
@@ -126,60 +108,60 @@ void draw_end(void);
 /*
  * clears the screen with given color.
  */
-void draw_clear(t_color color);
+void draw_clear(color_t color);
 
 /*
  * this function plot a pixel of given color at given position.
  */
-void draw_pixel(unsigned int x, unsigned int y, t_color color);
+void draw_pixel(unsigned int x, unsigned int y, color_t color);
 
 /*
  * draw a line.
  */
 void draw_line(unsigned int x1, unsigned int y1,
-	       unsigned int x2, unsigned int y2, t_color color);
+	       unsigned int x2, unsigned int y2, color_t color);
 
 /*
  * draw an empty rectangle.
  */
 void draw_rect(unsigned int x1, unsigned int y1,
-	       unsigned int x2, unsigned int y2, t_color color);
+	       unsigned int x2, unsigned int y2, color_t color);
 
 /*
  * draw a solid rectangle.
  */
 void draw_fillrect(unsigned int x1, unsigned int y1,
 		   unsigned int x2, unsigned int y2,
-		   t_color color, t_color interior);
+		   color_t color, color_t interior);
 
 /*
  * load a Windows BITMAP (BMP) from file.
  * the only supported files are 8 bits per pixels paletted.
  * the only supported palette is the default one (obtained with Paint).
  */
-t_image *load_image(const char *path);
+struct image *load_image(const char *path);
 
 /*
  * destroy a loaded image.
  */
-void clear_image(t_image * image);
+void clear_image(struct image *image);
 
 /*
  * display a loaded image with transparency.
  */
-void draw_image_alpha(t_image * image,
+void draw_image_alpha(struct image *image,
 		      unsigned int x, unsigned int y, unsigned int alpha);
 
 /*
  * display a loaded image.
  */
-void draw_image(t_image * image, unsigned int x, unsigned int y);
+void draw_image(struct image *image, unsigned int x, unsigned int y);
 
 /*
  * draw some text.
  */
 void draw_text(const char *s,
-	       unsigned int x, unsigned int y, t_color fg, t_color bg);
+	       unsigned int x, unsigned int y, color_t fg, color_t bg);
 
 /*
  * load an animation.
@@ -189,7 +171,7 @@ void draw_text(const char *s,
  *
  * invocation example: load_anim("pic1 pic2 pic3 pic4 pic5", PIC_ANIM_DELAY);
  */
-t_anim *load_anim(char *paths, int delay);
+struct anim *load_anim(char *paths, int delay);
 
 /*
  * draw an animation at coordinates (x, y)
@@ -197,7 +179,7 @@ t_anim *load_anim(char *paths, int delay);
  * jiffies is the reference ticks counter which should
  * be incremented at every timer tick.
  */
-void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies);
+void draw_anim(struct anim * anim, int x, int y, unsigned long jiffies);
 
 /*
  * video blue screen.

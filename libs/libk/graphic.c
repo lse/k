@@ -303,12 +303,12 @@ void draw_end(void)
 	swap_frontbuffer(offbuffer);
 }
 
-void draw_clear(t_color color)
+void draw_clear(color_t color)
 {
 	memset(offbuffer, color, FB_SIZE);
 }
 
-void draw_pixel(unsigned int x, unsigned int y, t_color color)
+void draw_pixel(unsigned int x, unsigned int y, color_t color)
 {
 	if (x >= GRAPHIC_WIDTH)
 		return;
@@ -327,7 +327,7 @@ static int abs(int a)
 }
 
 void draw_line(unsigned int x1, unsigned int y1,
-	       unsigned int x2, unsigned int y2, t_color color)
+	       unsigned int x2, unsigned int y2, color_t color)
 {
 	unsigned int i;
 
@@ -393,7 +393,7 @@ void draw_line(unsigned int x1, unsigned int y1,
 }
 
 void draw_rect(unsigned int x1, unsigned int y1,
-	       unsigned int x2, unsigned int y2, t_color color)
+	       unsigned int x2, unsigned int y2, color_t color)
 {
 	unsigned int x;
 	unsigned int y;
@@ -410,7 +410,7 @@ void draw_rect(unsigned int x1, unsigned int y1,
 
 void draw_fillrect(unsigned int x1, unsigned int y1,
 		   unsigned int x2, unsigned int y2,
-		   t_color color, t_color interior)
+		   color_t color, color_t interior)
 {
 	unsigned int x;
 	unsigned int y;
@@ -428,10 +428,29 @@ void draw_fillrect(unsigned int x1, unsigned int y1,
 			draw_pixel(x, y, interior);
 }
 
-t_image *load_image(const char *path)
+/*
+ * Windows BMP file header.
+ */
+
+struct bitmap_header {
+	char signature[2];
+	unsigned long filesize;
+	unsigned long reserved1;
+	unsigned long offset;
+	unsigned long reserved2;
+	unsigned long width;
+	unsigned long height;
+	unsigned short planes;
+	unsigned short bpp;
+	unsigned long reserved3;
+	unsigned long size;
+	char reserved[16];
+} __attribute__ ((packed));
+
+ struct image *load_image(const char *path)
 {
-	t_bitmap_header bmp;
-	t_image *img;
+	struct bitmap_header bmp;
+	 struct image *img;
 	int fd;
 	unsigned int i;
 	unsigned int j;
@@ -444,9 +463,9 @@ t_image *load_image(const char *path)
 	 * read the BMP header and extract data.
 	 */
 
-	if (read(fd, &bmp, sizeof(t_bitmap_header)) != sizeof(t_bitmap_header)
+	if (read(fd, &bmp, sizeof(bmp)) != sizeof(bmp)
 	    || bmp.signature[0] != 'B' || bmp.signature[1] != 'M'
-	    || !(img = malloc(sizeof(t_image)))) {
+	    || !(img = malloc(sizeof( struct image)))) {
 		close(fd);
 		return NULL;
 	}
@@ -489,7 +508,7 @@ t_image *load_image(const char *path)
 	return img;
 }
 
-void clear_image(t_image * image)
+void clear_image( struct image * image)
 {
 	unsigned int i;
 
@@ -499,7 +518,7 @@ void clear_image(t_image * image)
 	free(image);
 }
 
-void draw_image_alpha(t_image * image,
+void draw_image_alpha( struct image * image,
 		      unsigned int x, unsigned int y, unsigned int alpha)
 {
 	unsigned int i;
@@ -514,7 +533,7 @@ void draw_image_alpha(t_image * image,
 		}
 }
 
-void draw_image(t_image * image, unsigned int x, unsigned int y)
+void draw_image( struct image * image, unsigned int x, unsigned int y)
 {
 	draw_image_alpha(image, x, y, -1);
 }
@@ -532,7 +551,7 @@ static int bit_on(char c, int n)
 }
 
 void draw_text(const char *s,
-	       unsigned int x, unsigned int y, t_color fg, t_color bg)
+	       unsigned int x, unsigned int y, color_t fg, color_t bg)
 {
 	char c;
 	char ch;
@@ -558,17 +577,17 @@ void draw_text(const char *s,
 	}
 }
 
-t_anim *load_anim(char *paths, int delay)
+struct anim *load_anim(char *paths, int delay)
 {
 	char *p;
 	char *filename;
-	t_anim *anim = NULL;
+	struct anim *anim = NULL;
 	int i;
 
 	if (!paths || !*paths)
 		return NULL;
 
-	if (!(anim = malloc(sizeof(t_anim))))
+	if (!(anim = malloc(sizeof(struct anim))))
 		return NULL;
 
 	anim->nr_img = 1;
@@ -580,7 +599,7 @@ t_anim *load_anim(char *paths, int delay)
 		if (*p == ' ')
 			anim->nr_img++;
 
-	if (!(anim->imgs = malloc(anim->nr_img * sizeof(t_image)))) {
+	if (!(anim->imgs = malloc(anim->nr_img * sizeof( struct image)))) {
 		free(anim);
 		return NULL;
 	}
@@ -603,7 +622,7 @@ t_anim *load_anim(char *paths, int delay)
 	return anim;
 }
 
-void draw_anim(t_anim * anim, int x, int y, unsigned long jiffies)
+void draw_anim(struct anim * anim, int x, int y, unsigned long jiffies)
 {
 	if (anim->jiffies + anim->delay <= jiffies || anim->jiffies > jiffies) {
 		anim->jiffies = jiffies;
