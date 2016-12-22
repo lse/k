@@ -27,24 +27,18 @@ unsigned long jiffies = 0;
 char *trick[10];
 int hhh[10];
 
-typedef struct {
+struct {
 	enum e_gfx trick;
 	char *name;
 	int points;
 	int duration;
-} t_score;
-
-t_score tricks[] = {
+} tricks[] = {
 	{TRICK_ROTATE, "360", 30, 25},
 	{TRICK_ROTATE, "720", 30, 25},
 	{TRICK_FLIP, "flip", 20, 20},
 	{TRICK_SLIDE, "slide", 1, 1},
 	{TRICK_NONE, NULL, 0, 0}
 };
-
-/*
- *
- */
 
 static void draw_trick(void)
 {
@@ -80,11 +74,7 @@ static void draw_trick(void)
 	}
 }
 
-/*
- *
- */
-
-static void splash_screen()
+static void splash_screen(void)
 {
 	unsigned long t;
 	int blink = 0;
@@ -136,12 +126,10 @@ void draw_score(void)
 	draw_text(itoa(jiffies / 50, 10), 10, 10, PURPLE, BG_COLOR);
 
 	draw_text("Trick: ", GRAPHIC_WIDTH / 2 - 45, 10, BLUE, BG_COLOR);
-	draw_text(itoa(score_tmp, 10), GRAPHIC_WIDTH / 2 + 5, 10, BLUE,
-		  BG_COLOR);
+	draw_text(itoa(score_tmp, 10), GRAPHIC_WIDTH / 2 + 5, 10, BLUE, BG_COLOR);
 	if (skater.combo > 1) {
 		draw_text("Combo x", GRAPHIC_WIDTH / 2 - 45, 20, RED, BG_COLOR);
-		draw_text(itoa(skater.combo, 10), GRAPHIC_WIDTH / 2 + 15, 20,
-			  RED, BG_COLOR);
+		draw_text(itoa(skater.combo, 10), GRAPHIC_WIDTH / 2 + 15, 20, RED, BG_COLOR);
 	}
 
 	draw_text("Score: ", GRAPHIC_WIDTH - 90, 10, GREEN, BG_COLOR);
