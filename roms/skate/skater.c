@@ -23,14 +23,10 @@
 */
 #include "skate.h"
 
-t_skater skater;
+struct skater skater;
 struct anim *anim[7];
 int score = 0;
 int score_tmp = 0;
-
-/*
- *
- */
 
 static void skater_anim(void)
 {
@@ -57,14 +53,8 @@ static void skater_anim(void)
 		}
 	}
 
-	/*  */
-	draw_anim(graphics[skater.trick].gfx, skater.x,
-		  skater.y - skater.height, jiffies);
+	draw_anim(graphics[skater.trick].gfx, skater.x, skater.y - skater.height, jiffies);
 }
-
-/*
- *
- */
 
 void skater_jump(int height)
 {
@@ -123,10 +113,6 @@ void skater_slide(void)
 	score_tmp += 3;
 }
 
-/*
- *
- */
-
 void skater_init(void)
 {
 	skater.x = 0;
@@ -144,10 +130,6 @@ void skater_init(void)
 	score_tmp = 0;
 }
 
-/*
- *
- */
-
 int skater_height(int pos)
 {
 	int y_max = 0;
@@ -164,10 +146,6 @@ int skater_height(int pos)
 	}
 	return x_max;
 }
-
-/*
- *
- */
 
 void skater_height_update(int floor_height)
 {
@@ -191,10 +169,6 @@ void skater_height_update(int floor_height)
 		skater_crash();
 }
 
-/*
- *
- */
-
 void skater_draw(void)
 {
 	int floor;
@@ -206,9 +180,7 @@ void skater_draw(void)
 	if (park[skater.current_box] != BOX_RAIL)
 		skater.slide = 0;
 
-	floor =
-	    GRAPHIC_HEIGHT - 10 - box_height(skater.current_box,
-					     get_shift(max_x));
+	floor = GRAPHIC_HEIGHT - 10 - box_height(skater.current_box, get_shift(max_x));
 
 	skater_height_update(floor);
 	skater_anim();
@@ -217,8 +189,7 @@ void skater_draw(void)
 		if (skater.trick != TRICK_CRASH) {
 			score += score_tmp;
 			if (skater.combo)
-				score +=
-				    (10 + skater.combo) * (skater.combo - 1);
+				score += (10 + skater.combo) * (skater.combo - 1);
 			skater.combo = 0;
 			score_tmp = 0;
 		}

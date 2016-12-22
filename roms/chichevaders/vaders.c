@@ -24,11 +24,11 @@
 #include <graphic.h>
 #include <sound.h>
 
-typedef struct monster {
+struct monster {
 	int x;
 	int y;
 	int alive;
-} s_monster;
+};
 
 /*
  * the splash screen with sexy chiche's face.
@@ -118,7 +118,7 @@ static void game_loop(struct image * img)
 	int x, y;
 	int dx, dy;
 	int mdx, mdy, mcnt;
-	s_monster monsters[NB_MONSTERS];
+	struct monster monsters[NB_MONSTERS];
 	int ym = X_INIT_MONSTERS;
 	int i = 0;
 	int good = 0;
