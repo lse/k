@@ -450,90 +450,88 @@ struct bitmap_header {
  struct image *load_image(const char *path)
 {
 	struct bitmap_header bmp;
-	 struct image *img;
-	int fd;
-	unsigned int i;
-	unsigned int j;
-	int ppl;
 
-	if ((fd = open(path, 0)) < 0)
+	int fd = open(path, 0);
+	if (fd < 0)
 		return NULL;
 
-	/*
-	 * read the BMP header and extract data.
-	 */
-
-	if (read(fd, &bmp, sizeof(bmp)) != sizeof(bmp)
-	    || bmp.signature[0] != 'B' || bmp.signature[1] != 'M'
-	    || !(img = malloc(sizeof( struct image)))) {
-		close(fd);
-		return NULL;
+	int rc = read(fd, &bmp, sizeof(bmp));
+	if (rc < (int)sizeof(bmp)) {
+		goto err_img;
 	}
+
+	if (!(bmp.signature[0] == 'B' && bmp.signature[1] == 'M')) {
+		goto err_img;
+	}
+
+	struct image *img = malloc(sizeof(struct image));
+	if (!img) {
+		goto err_img;
+	}
+
 	img->width = bmp.width;
 	img->height = bmp.height;
 
-	/*
-	 * build the image.
-	 */
+	img->data = calloc(img->height, sizeof(*img->data));
+	if (!img->data)
+		goto err_buf;
 
-	if (!(img->data = malloc(img->height * sizeof(unsigned char *)))) {
-		free(img);
-		close(fd);
-		return NULL;
+	for (unsigned int i = 0; i < img->height; i++) {
+		img->data[i] = calloc(img->width, sizeof(*img->data[i]));
+		if (!img->data[i])
+			goto err;
 	}
-	for (i = 0; i < img->height; i++)
-		if (!(img->data[i] = malloc(img->width))) {
-			for (j = 0; j < i; j++)
-				free(img->data[j]);
-			free(img->data);
-			free(img);
-			close(fd);
-			return NULL;
-		}
-	ppl = (bmp.size - (img->width * img->height)) / img->height;
+
+	int ppl = (bmp.size - (img->width * img->height)) / img->height;
+
 	if (seek(fd, bmp.offset, SEEK_SET) == (off_t) - 1) {
-		clear_image(img);
-		close(fd);
-		return NULL;
+		goto err;
 	}
-	for (i = 0; i < img->height; i++) {
-		if (read(fd, img->data[i], img->width) != (int)img->width ||
-		    seek(fd, ppl, SEEK_CUR) == (off_t) - 1) {
-			clear_image(img);
-			close(fd);
-			return NULL;
-		}
+
+	for (unsigned int i = 0; i < img->height; i++) {
+		rc = read(fd, img->data[i], img->width);
+		if (rc < (int)img->width)
+			goto err;
+
+		rc = seek(fd, ppl, SEEK_CUR);
+
+		if (rc == (off_t)-1)
+			goto err;
 	}
+
 	close(fd);
+
 	return img;
+
+err:
+	for (unsigned int i = 0; i < img->height; i++)
+		free(img->data[i]);
+	free(img->data);
+err_buf:
+	free(img);
+err_img:
+	close(fd);
+	return NULL;
 }
 
 void clear_image( struct image * image)
 {
-	unsigned int i;
-
-	for (i = 0; i < image->height; i++)
+	for (unsigned int i = 0; i < image->height; i++)
 		free(image->data[i]);
 	free(image->data);
 	free(image);
 }
 
-void draw_image_alpha( struct image * image,
-		      unsigned int x, unsigned int y, unsigned int alpha)
+void draw_image_alpha(struct image *image, unsigned int x, unsigned int y, unsigned int alpha)
 {
-	unsigned int i;
-	unsigned int j;
-
-	for (i = 0; i < image->height; i++)
-		for (j = 0; j < image->width; j++) {
-			if ((alpha == (unsigned int)-1)
-			    || (alpha != image->data[i][j]))
-				draw_pixel(x + j, y + image->height - i,
-					   image->data[i][j]);
+	for (unsigned int i = 0; i < image->height; i++)
+		for (unsigned int j = 0; j < image->width; j++) {
+			if ((alpha == (unsigned int)-1) || (alpha != image->data[i][j]))
+				draw_pixel(x + j, y + image->height - i, image->data[i][j]);
 		}
 }
 
-void draw_image( struct image * image, unsigned int x, unsigned int y)
+void draw_image(struct image *image, unsigned int x, unsigned int y)
 {
 	draw_image_alpha(image, x, y, -1);
 }
@@ -550,30 +548,27 @@ static int bit_on(char c, int n)
 	return c & mask;
 }
 
-void draw_text(const char *s,
-	       unsigned int x, unsigned int y, color_t fg, color_t bg)
+void draw_text(const char *s, unsigned int x, unsigned int y, color_t fg, color_t bg)
 {
 	char c;
 	char ch;
 	char p;
-	unsigned int i;
-	unsigned int j;
 	unsigned int pos;
 	unsigned int strp = 0;
 
 	for (; *s; s++, strp++) {
 		c = *s;
 
-		for (i = 0; i < 8; ++i)
-			for (j = 0; j < 8; ++j) {
+		for (unsigned int i = 0; i < 8; ++i) {
+			for (unsigned int j = 0; j < 8; ++j) {
 				ch = font[c * 8 + i];
 				p = bit_on(ch, j) ? fg : bg;
 
-				pos = ((y + i) * GRAPHIC_WIDTH) +
-				    (strp * 8 + x) + j;
+				pos = ((y + i) * GRAPHIC_WIDTH) + (strp * 8 + x) + j;
 				if (!((bg == (unsigned int)-1) && (p == -1)))
 					offbuffer[pos] = p;
 			}
+		}
 	}
 }
 
@@ -599,7 +594,7 @@ struct anim *load_anim(char *paths, int delay)
 		if (*p == ' ')
 			anim->nr_img++;
 
-	if (!(anim->imgs = malloc(anim->nr_img * sizeof( struct image)))) {
+	if (!(anim->imgs = calloc(anim->nr_img, sizeof(struct image)))) {
 		free(anim);
 		return NULL;
 	}
@@ -634,16 +629,19 @@ void draw_anim(struct anim * anim, int x, int y, unsigned long jiffies)
 
 static void blue_screen_cons(const char *message)
 {
-	char seq[] = { CONS_ESCAPE, CONS_COLOR,
+	char seq[] = {
+		CONS_ESCAPE, CONS_COLOR,
 		CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) | CONS_LIGHT,
 		CONS_ESCAPE, CONS_CLEAR
 	};
-	char fatal[] = { CONS_ESCAPE, CONS_SETX, 32,
+	char fatal[] = {
+		CONS_ESCAPE, CONS_SETX, 32,
 		CONS_ESCAPE, CONS_SETY, 10,
 		CONS_ESCAPE, CONS_COLOR,
 		CONS_BACK(CONS_WHITE) | CONS_FRONT(CONS_BLUE)
 	};
-	char msg[] = { CONS_ESCAPE, CONS_SETX, 0,
+	char msg[] = {
+		CONS_ESCAPE, CONS_SETX, 0,
 		CONS_ESCAPE, CONS_SETY, 13,
 		CONS_ESCAPE, CONS_COLOR,
 		CONS_BACK(CONS_BLUE) | CONS_FRONT(CONS_WHITE) | CONS_LIGHT
@@ -668,7 +666,8 @@ static void blue_screen_cons(const char *message)
 	write(msg, sizeof(msg) / sizeof(char));
 	printf("%s", chiche2);
 
-	while (1) ;
+	while (1)
+		continue;
 }
 
 static void blue_screen_fb(const char *message)

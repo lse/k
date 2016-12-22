@@ -3,12 +3,12 @@
 
 void *calloc(size_t nmemb, size_t size)
 {
-	void *p = NULL;
+	void *p = malloc(size * nmemb);
 
-	p = malloc(size * nmemb);
+	if (!p)
+		return NULL;
 
-	if (p != NULL)
-		memset(p, 0, nmemb * size);
+	memset(p, 0, nmemb * size);
 
 	return (p);
 }
