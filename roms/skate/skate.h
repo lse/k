@@ -42,13 +42,13 @@ enum e_gfx {
 	NO_BOX
 };
 
-typedef struct {
+struct skatepark {
 	int size;
 	enum e_box *park;
 	unsigned long timeout;
-} t_skatepark;
+};
 
-typedef struct {
+struct skater {
 	int x;
 	int y;
 	int height;
@@ -61,9 +61,9 @@ typedef struct {
 	int rotation;
 	int combo;
 	int current_box;
-} t_skater;
+};
 
-typedef struct {
+struct scrolling {
 	unsigned long timer1;
 	unsigned long timer2;
 	int freq;
@@ -71,14 +71,14 @@ typedef struct {
 	int x;
 	int current_box;
 	int width;
-} t_scrolling;
+};
 
-typedef struct {
+struct gfx {
 	enum e_gfx id;
 	int delay;
 	char *filename;
 	void *gfx;
-} t_gfx;
+};
 
 #define BG_COLOR	BLACK
 #define BOX_WIDTH	40
@@ -87,12 +87,12 @@ typedef struct {
 #define SPEED		2
 
 extern enum e_gfx park[PARK_SIZE];
-extern t_scrolling scrolling;
+extern struct scrolling scrolling;
 extern unsigned long jiffies;
-extern t_skater skater;
+extern struct skater skater;
 extern int score;
 extern int score_tmp;
-extern t_gfx graphics[];
+extern struct gfx graphics[];
 extern char *trick[];
 
 int scroll_slowdown(void);

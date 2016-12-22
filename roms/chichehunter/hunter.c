@@ -76,7 +76,8 @@ static int splash_screen(void)
 		 */
 
 		blink = (blink + 1) % 10;
-		while (gettick() - t < 33) ;
+		while (gettick() - t < 33)
+			continue;
 	}
 
 	playsound(NULL, -1);
@@ -111,21 +112,17 @@ static void game_loop(struct image * img)
 	int px, py;
 	int k;
 	float mx = 0, my = 0, mdx, mdy, max, may, alive;
-	float les_mx[] =
-	    { 320, 0, 0, 0, 320, 0, 320, 320, 320, 0, 0, 320, 0, 320, 320, 0, 0,
-		320, 320, 320, 0
+	float les_mx[] = {
+		320, 0, 0, 0, 320, 0, 320, 320, 320, 0, 0, 320, 0, 320, 320, 0, 0, 320, 320, 320, 0
 	};
-	float les_dx[] =
-	    { -5, 5, 5, 5, -5, 5, -5, -5, -5, 5, 5, -5, 5, -5, -5, 5, 5, -5, -5,
-		-5, 5
+	float les_dx[] = {
+		-5, 5, 5, 5, -5, 5, -5, -5, -5, 5, 5, -5, 5, -5, -5, 5, 5, -5, -5, -5, 5
 	};
-	float les_my[] =
-	    { 50, 30, 20, 35, 50, 25, 25, 20, 50, 40, 46, 41, 36, 30, 28, 47,
-		33, 42, 51, 46
+	float les_my[] = {
+		50, 30, 20, 35, 50, 25, 25, 20, 50, 40, 46, 41, 36, 30, 28, 47, 33, 42, 51, 46
 	};
-	float les_dy[] =
-	    { -2, -2, -1, -3, -2, -1, -2, -2, -2.5, -1, -3, -2, -1, -1, -3, -1,
-		-2, -1, -2, -2
+	float les_dy[] = {
+		-2, -2, -1, -3, -2, -1, -2, -2, -2.5, -1, -3, -2, -1, -1, -3, -1, -2, -1, -2, -2
 	};
 	int les_index = 0;
 	int i = 0;
@@ -137,8 +134,7 @@ static void game_loop(struct image * img)
 	struct melody *sound = load_sound("/ball.csf");
 	int mouse_x, mouse_y, buttons;
 	struct image *bush = load_image("/bush.bmp");
-	char score[] =
-	    { 'S', 'C', 'O', 'R', 'E', ':', ' ', 'X', 'X', '/', 'X', 'X', 0 };
+	char score[] = "score: xx/xx";
 	int choot, can_choot;
 
 	if (!img)
@@ -290,7 +286,8 @@ static void game_loop(struct image * img)
 		/*
 		 * 33 ms sync between each frame.
 		 */
-		while (gettick() - t <= 10) ;
+		while (gettick() - t <= 10)
+			continue;
 	}
 
 	clear_image(img);

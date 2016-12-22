@@ -23,29 +23,20 @@
 */
 #include "skate.h"
 
-enum e_gfx park[] =
-    { NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX,
-	    BOX_UP
+enum e_gfx park[] = {
+	NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP
 };
 
-t_scrolling scrolling;
+struct scrolling scrolling;
 
 void scroll_stop(void)
 {
@@ -62,18 +53,10 @@ static void scroll_init(void)
 	scroll_stop();
 }
 
-/*
- *
- */
-
 void park_init(void)
 {
 	scroll_init();
 }
-
-/*
- *
- */
 
 int get_box(int x)
 {
@@ -84,10 +67,6 @@ int get_shift(int x)
 {
 	return x % BOX_WIDTH;
 }
-
-/*
- *
- */
 
 int box_height(int box, int shift)
 {
@@ -106,10 +85,6 @@ int box_height(int box, int shift)
 	}
 }
 
-/*
- *
- */
-
 void park_draw(void)
 {
 	int box = get_box(scrolling.x);
@@ -123,8 +98,7 @@ void park_draw(void)
 
 		x += BOX_WIDTH;
 		box++;
-	}
-	while (x < GRAPHIC_WIDTH);
+	} while (x < GRAPHIC_WIDTH);
 }
 
 void scroll(void)

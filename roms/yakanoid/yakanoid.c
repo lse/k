@@ -149,7 +149,8 @@ static void game_loop(void)
 					draw_end();
 					for (i = 0; i < 10; i++) {
 						t = gettick();
-						while (gettick() - t < 100) ;
+						while (gettick() - t < 100)
+							continue;
 					}
 					return;
 				}
@@ -157,7 +158,8 @@ static void game_loop(void)
 				draw_end();
 				for (i = 0; i < 10; i++) {
 					t = gettick();
-					while (gettick() - t < 100) ;
+					while (gettick() - t < 100)
+						continue;
 				}
 				pos = 105;
 				x = 105;
@@ -167,7 +169,8 @@ static void game_loop(void)
 			}
 		}
 
-		while (gettick() - t < 8) ;
+		while (gettick() - t < 8)
+			continue;
 		draw_end();
 	}
 }
