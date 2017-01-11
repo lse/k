@@ -28,11 +28,13 @@ OBJS	= \
 	  memcmp.o \
 	  memcpy.o \
 	  memset.o \
-	  stdio.o \
+	  printf.o \
+	  puts.o \
 	  strcmp.o \
 	  strcpy.o \
 	  strlen.o \
 	  strncmp.o \
+	  strnlen.o \
 
 DEPS = $(OBJS:.o=.d)
 
