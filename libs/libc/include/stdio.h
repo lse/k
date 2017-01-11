@@ -26,6 +26,7 @@
 
 #include <stdarg.h>
 
+int puts(const char *s);
 int printf(const char *format, ...);
 int vprintf(const char *format, va_list args);
 
