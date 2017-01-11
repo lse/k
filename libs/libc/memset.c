@@ -2,10 +2,10 @@
 
 void *memset(void *s, int c, size_t n)
 {
-	unsigned char *p = NULL;
+	char *p = s;
 
-	for (p = s; n > 0; n--, p++)
-		*p = c;
+	for (size_t i = 0; i < n; ++i)
+		p[i] = c;
 
-	return (s);
+	return s;
 }
