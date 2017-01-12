@@ -27,7 +27,6 @@ LIB	= libk.a
 OBJS	= \
 	  calloc.o \
 	  graphic.o \
-	  itoa.o \
 	  malloc.o \
 	  realloc.o \
 	  sound.o \

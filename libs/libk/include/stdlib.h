@@ -34,6 +34,4 @@ void free(void *ptr);
 
 void *calloc(size_t nmemb, size_t size);
 
-char *itoa(int nb, int base);
-
 #endif				/* !STDLIB_H_ */
