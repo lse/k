@@ -90,6 +90,7 @@ static void game_loop(void)
 	int fy = 0;
 	unsigned int gravity = 45;
 	int score = 0;
+	char buf[12] = { 0 };
 
 	pic[0] = load_image("/1.bmp");
 	pic[1] = load_image("/2.bmp");
@@ -242,11 +243,13 @@ static void game_loop(void)
 		draw_image_alpha(pic[p / 2], x - 8 - fx, 170 - y + fy, 250);
 
 		draw_text("Gravity: ", 0, 0, 162, -1);
-		draw_text(itoa(gravity, 10), 70, 0, 162, -1);
+		sprintf(buf, "%d", gravity);
+		draw_text(buf, 70, 0, 162, -1);
 
 		if ((fire == 0) && (score != 0)) {
 			draw_text("Score: ", 100, 60, 12, -1);
-			draw_text(itoa(score, 10), 170, 60, 12, -1);
+			sprintf(buf, "%d", score);
+			draw_text(buf, 170, 60, 12, -1);
 		}
 
 		draw_end();
