@@ -58,10 +58,10 @@ static void game_loop(void)
 	int mtrx[5][10];
 	int x, y, dx, dy;
 	int bx, bx2, by;
-	char *s;
 	int score = 0;
 	int lives = 3;
 	unsigned long t;
+	char buf[12] = { 0 };
 
 	for (line = 0; line < 5; line++)
 		for (i = 0; i < 10; i++)
@@ -119,12 +119,12 @@ static void game_loop(void)
 		draw_image(bar, pos - 25, 190);
 
 		draw_text("score:", 240, 40, 20, 0);
-		draw_text((s = itoa(score, 10)), 240, 50, 20, 0);
-		free(s);
+		sprintf(buf, "%d", score);
+		draw_text(buf, 240, 50, 20, 0);
 
 		draw_text("lives:", 240, 150, 20, 0);
-		draw_text((s = itoa(lives, 10)), 240, 160, 20, 0);
-		free(s);
+		sprintf(buf, "%d", lives);
+		draw_text(buf, 240, 160, 20, 0);
 
 		if (y + 5 < 6 * 12) {
 			bx = (x - 5 - 10) / 20;
