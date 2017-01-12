@@ -120,20 +120,26 @@ void speed(void)
 
 void draw_score(void)
 {
+	char buf[12] = { 0 };
+
 	draw_trick();
 
 	//  draw_text("Time: ", 10, 10, PURPLE, BG_COLOR);
-	draw_text(itoa(jiffies / 50, 10), 10, 10, PURPLE, BG_COLOR);
+	sprintf(buf, "%d", jiffies / 50);
+	draw_text(buf, 10, 10, PURPLE, BG_COLOR);
 
 	draw_text("Trick: ", GRAPHIC_WIDTH / 2 - 45, 10, BLUE, BG_COLOR);
-	draw_text(itoa(score_tmp, 10), GRAPHIC_WIDTH / 2 + 5, 10, BLUE, BG_COLOR);
+	sprintf(buf, "%d", score_tmp);
+	draw_text(buf, GRAPHIC_WIDTH / 2 + 5, 10, BLUE, BG_COLOR);
 	if (skater.combo > 1) {
 		draw_text("Combo x", GRAPHIC_WIDTH / 2 - 45, 20, RED, BG_COLOR);
-		draw_text(itoa(skater.combo, 10), GRAPHIC_WIDTH / 2 + 15, 20, RED, BG_COLOR);
+		sprintf(buf, "%d", skater.combo);
+		draw_text(buf, GRAPHIC_WIDTH / 2 + 15, 20, RED, BG_COLOR);
 	}
 
 	draw_text("Score: ", GRAPHIC_WIDTH - 90, 10, GREEN, BG_COLOR);
-	draw_text(itoa(score, 10), GRAPHIC_WIDTH - 40, 10, GREEN, BG_COLOR);
+	sprintf(buf, "%d", score);
+	draw_text(buf, GRAPHIC_WIDTH - 40, 10, GREEN, BG_COLOR);
 }
 
 /*
