@@ -60,3 +60,4 @@ clean:
 	done
 	$(RM) k.iso 
 	$(RM) -r root
+	$(RM) -r iso
