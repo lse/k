@@ -23,7 +23,7 @@
 */
 #include "compiler.h"
 #include "libvga.h"
-#include "libvga_io.h"
+#include "io.h"
 
 /*
 ** Use to save the VGA plane 2, which contains the text font,
@@ -152,60 +152,60 @@ static void libvga_write_regs(unsigned char *regs)
 	unsigned int a;
 
 	/* write the MISC register */
-	OUTB(VGA_MISC_WRITE, *regs);
+	outb(VGA_MISC_WRITE, *regs);
 	regs++;
 
 	/* write SEQ registers */
 	for (i = 0; i < VGA_NUM_SEQ_REGS; i++) {
-		OUTB(VGA_SEQ_INDEX, i);
-		OUTB(VGA_SEQ_DATA, *regs);
+		outb(VGA_SEQ_INDEX, i);
+		outb(VGA_SEQ_DATA, *regs);
 		regs++;
 	}
 
 	/* write CRTC registers */
-	OUTB(VGA_CRTC_INDEX, 0x03);
-	INB(VGA_CRTC_DATA, a);
-	OUTB(VGA_CRTC_DATA, a | 0x80);
-	OUTB(VGA_CRTC_INDEX, 0x11);
-	INB(VGA_CRTC_DATA, a);
-	OUTB(VGA_CRTC_DATA, a & ~0x80);
+	outb(VGA_CRTC_INDEX, 0x03);
+	a = inb(VGA_CRTC_DATA);
+	outb(VGA_CRTC_DATA, a | 0x80);
+	outb(VGA_CRTC_INDEX, 0x11);
+	a = inb(VGA_CRTC_DATA);
+	outb(VGA_CRTC_DATA, a & ~0x80);
 	regs[0x03] |= 0x80;
 	regs[0x11] &= ~0x80;
 	for (i = 0; i < VGA_NUM_CRTC_REGS; i++) {
-		OUTB(VGA_CRTC_INDEX, i);
-		OUTB(VGA_CRTC_DATA, *regs);
+		outb(VGA_CRTC_INDEX, i);
+		outb(VGA_CRTC_DATA, *regs);
 		regs++;
 	}
 
 	/* write GC registers */
 	for (i = 0; i < VGA_NUM_GC_REGS; i++) {
-		OUTB(VGA_GC_INDEX, i);
-		OUTB(VGA_GC_DATA, *regs);
+		outb(VGA_GC_INDEX, i);
+		outb(VGA_GC_DATA, *regs);
 		regs++;
 	}
 
 	/* write AC registers */
-	INB(VGA_INSTAT_READ, a);
+	a = inb(VGA_INSTAT_READ);
 	for (i = 0; i < VGA_NUM_AC_REGS; i++) {
-		OUTB(VGA_AC_INDEX, i);
-		OUTB(VGA_AC_WRITE, *regs);
+		outb(VGA_AC_INDEX, i);
+		outb(VGA_AC_WRITE, *regs);
 		regs++;
 	}
-	INB(VGA_INSTAT_READ, a);
-	OUTB(VGA_AC_INDEX, 0x20);
+	a = inb(VGA_INSTAT_READ);
+	outb(VGA_AC_INDEX, 0x20);
 
 	/* write the default palette to the DAC */
-	OUTB(VGA_DAC_MASK, 0xFF);
+	outb(VGA_DAC_MASK, 0xFF);
 	libvga_set_palette(libvga_default_palette, array_size(libvga_default_palette));
 }
 
 void libvga_set_palette(unsigned int *new_palette, size_t size)
 {
-	OUTB(VGA_DAC_WRITE_INDEX, 0);
+	outb(VGA_DAC_WRITE_INDEX, 0);
 	for (size_t i = 0; i < size; i++) {
-		OUTB(VGA_DAC_DATA, ((new_palette[i] >> 16) >> 2) & 0xFF);
-		OUTB(VGA_DAC_DATA, ((new_palette[i] >> 8) >> 2) & 0xFF);
-		OUTB(VGA_DAC_DATA, ((new_palette[i]) >> 2) & 0xFF);
+		outb(VGA_DAC_DATA, ((new_palette[i] >> 16) >> 2) & 0xFF);
+		outb(VGA_DAC_DATA, ((new_palette[i] >> 8) >> 2) & 0xFF);
+		outb(VGA_DAC_DATA, ((new_palette[i]) >> 2) & 0xFF);
 	}
 }
 
@@ -213,8 +213,8 @@ char *libvga_get_framebuffer(void)
 {
 	unsigned int mmap_select;
 
-	OUTB(VGA_GC_INDEX, 6);
-	INB(VGA_GC_DATA, mmap_select);
+	outb(VGA_GC_INDEX, 6);
+	mmap_select = inb(VGA_GC_DATA);
 	mmap_select >>= 2;
 	mmap_select &= 3;
 	switch (mmap_select) {
