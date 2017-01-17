@@ -24,13 +24,13 @@
 include config.mk
 
 ROMS	= \
-	  roms/KGameBoy \
 	  roms/chichehunter \
 	  roms/chichepong \
 	  roms/chichevaders \
 	  roms/perrodlauncher \
 	  roms/skate \
 	  roms/yakanoid \
+
 
 SUBDIRS	= \
 	  $(ROMS) \

@@ -22,49 +22,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <k/kstd.h>
-#include <stdio.h>
 
-#include "console.h"
-#include "init.h"
-#include "kfs.h"
 #include "multiboot.h"
-#include "rom.h"
-#include "syscall.h"
+
 
 void k_main(unsigned long magic, multiboot_info_t *info)
 {
 	(void)magic;
+	(void)info;
 
-	console_init();
+	char star[4] = "|/-\\";
+	char *fb = (void *)0xb8000;
 
-	char *cmdline = (char *)info->cmdline;
-
-	printf("[+] cmdline: %s\n", cmdline);
-
-	init_pm();
-	init_interrupt();
-	init_syscall(/* enable_tracing= */ 0);
-
-	init_pic();
-	init_kbd();
-	init_pit();
-	init_sound();
-
-	init_memory();
-	write_init();
-	init_vga();
-
-	if (kfs_init((void *)((module_t *)info->mods_addr)[0].mod_start) < 0) {
-		printf("[+] unable to init kfs\n");
-		return;
+	for (unsigned i = 0; ; ) {
+		*fb = star[i++ % 4];
 	}
-
-	if (rom_init(cmdline) < 0) {
-		printf("[+] unable to init rom \"%s\"\n", cmdline);
-		return;
-	}
-
-	rom_exec();
 
 	for (;;)
 		asm volatile ("hlt");

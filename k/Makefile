@@ -25,27 +25,9 @@ include ../config.mk
 
 TARGET	= k
 OBJS	= \
-	  console.o \
 	  crt0.o \
-	  events.o \
-	  exec.o \
-	  isr.o \
 	  k.o \
-	  kbd.o \
-	  kfs.o \
 	  libvga.o \
-	  malloc.o \
-	  pic.o \
-	  pit.o \
-	  pm.o \
-	  sbrk.o \
-	  screen.o \
-	  serial.o \
-	  sound.o \
-	  syscall.o \
-	  syscall_gate.o \
-	  vga.o \
-	  write.o \
 
 
 DEPS = $(OBJS:.o=.d)
@@ -54,8 +36,7 @@ all: $(TARGET)
 
 $(TARGET): CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
 $(TARGET): LDFLAGS += -Wl,-Tk.lds
-$(TARGET): LDLIBS = write.sym -L../libs/libc -lc
-$(TARGET): write.sym
+$(TARGET): LDLIBS = -L../libs/libc -lc
 $(TARGET): $(OBJS)
 
 clean:
