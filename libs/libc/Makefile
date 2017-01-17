@@ -40,7 +40,10 @@ DEPS = $(OBJS:.o=.d)
 
 $(OBJS): CPPFLAGS += -MMD -Iinclude -I../../k/include/
 
-all: $(LIB)($(OBJS))
+all: $(LIB)
+
+$(LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
 
 clean:
 	$(RM) $(OBJS) $(DEPS) $(LIB)
