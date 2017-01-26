@@ -135,7 +135,7 @@ kfs_write_inode(int romfd, int fd, struct kfs_inode *inode, u32 blk_idx)
 			struct kfs_block blk = { 0 };
 
 			if (!kfs_read_block(fd, &blk))
-				return blk_idx;
+				break;
 
 			pr_info("writing indirect data block to offset %u\n", blk_idx * KFS_BLK_SZ);
 
@@ -147,6 +147,9 @@ kfs_write_inode(int romfd, int fd, struct kfs_inode *inode, u32 blk_idx)
 			iblock_idx.blks[j] = blk.idx;
 			iblock_idx.blk_cnt++;
 		}
+		if (!iblock_idx.blk_cnt)
+			break;
+
 		iblock_idx.idx = blk_idx++;
 		iblock_idx.cksum = kfs_checksum(&iblock_idx, sizeof(iblock_idx) - sizeof(iblock_idx.cksum));
 
