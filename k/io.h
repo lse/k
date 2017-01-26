@@ -5,19 +5,16 @@
 
 static inline void outb(u16 port, u8 val)
 {
-	(void)port;
-	(void)val;
-
-	// FIXME
+	asm volatile ("outb %0, %1" : /* No output */ : "a"(val), "d"(port));
 }
 
 static inline u8 inb(u16 port)
 {
-	(void)port;
+	u8 res;
 
-	// FIXME
+	asm volatile ("inb %1, %0" : "=&a"(res) : "d"(port));
 
-	return 0;
+	return res;
 }
 
 #endif				/* !IO_H_ */
