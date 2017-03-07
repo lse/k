@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 	if (!rom_name)
 		rom_name = rom_file;
 
-	int romfd = open(".", O_WRONLY | O_TMPFILE, 0666);
+	int romfd = open(rom_file, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (romfd < 0)
 		err(1, "unable to open %s", rom_file);
 
@@ -272,14 +272,6 @@ int main(int argc, char **argv)
 	u32 blk_cnt = kfs_write_files(romfd, files, nb_files, 1);
 
 	kfs_write_superblock(romfd, rom_name, blk_cnt, nb_files);
-
-	char path[PATH_MAX];
-	snprintf(path, PATH_MAX, "/proc/self/fd/%d", romfd);
-	unlinkat(AT_FDCWD, rom_file, 0);
-	int rc = linkat(AT_FDCWD, path, AT_FDCWD, rom_file, AT_SYMLINK_FOLLOW);
-	if (rc < 0)
-		err(1, "linkat failed");
-
 
 	return 0;
 }
