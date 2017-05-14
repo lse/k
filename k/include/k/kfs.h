@@ -83,10 +83,10 @@ static inline unsigned int kfs_checksum(const void *data, size_t size)
 	const u8 *buf = data;
 
 	while (i < size) {
-		a = (a + buf[i++]) % ADLER32_MOD;
-		b = (a + b) % ADLER32_MOD;
+		a += buf[i++];
+		b += a;
 	}
-	return (b << 16) | a;
+	return ((b % ADLER32_MOD) << 16) | (a % ADLER32_MOD);
 }
 
 #endif
