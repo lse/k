@@ -25,15 +25,21 @@ include ../../config.mk
 
 LIB	= libc.a
 OBJS	= \
+	  memchr.o \
 	  memcmp.o \
 	  memcpy.o \
+	  memmove.o \
 	  memset.o \
 	  printf.o \
 	  puts.o \
+	  strcasecmp.o \
+	  strcat.o \
 	  strcmp.o \
 	  strcpy.o \
 	  strlen.o \
+	  strncasecmp.o \
 	  strncmp.o \
+	  strncpy.o \
 	  strnlen.o \
 
 DEPS = $(OBJS:.o=.d)
