@@ -95,6 +95,11 @@ void switch_graphic(void);
 void switch_text(void);
 
 /*
+ * this fumction changes the color palette of the VGA.
+ */
+void set_palette(unsigned int *new_palette, size_t size);
+
+/*
  * call this function at the beginning of drawing a frame.
  */
 void draw_begin(void);

@@ -124,3 +124,8 @@ int getkeymode(int mode)
 {
 	return ((int)syscall1(SYSCALL_GETKEYMODE, mode));
 }
+
+void set_palette(unsigned int *new_palette, size_t size)
+{
+	syscall2(SYSCALL_SETPALETTE, (u32)new_palette, size);
+}
