@@ -33,7 +33,8 @@ ROMS	= \
 
 #ifndef STUDENT
 ROMS	+= \
-	  roms/KGameBoy
+	  roms/KGameBoy \
+	  roms/doom \
 #endif
 
 SUBDIRS	= \
