@@ -318,14 +318,6 @@ void draw_pixel(unsigned int x, unsigned int y, color_t color)
 	offbuffer[y * GRAPHIC_WIDTH + x] = color;
 }
 
-static int abs(int a)
-{
-	if (a < 0)
-		return -a;
-	else
-		return a;
-}
-
 void draw_line(unsigned int x1, unsigned int y1,
 	       unsigned int x2, unsigned int y2, color_t color)
 {
