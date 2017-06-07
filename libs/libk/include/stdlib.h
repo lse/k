@@ -34,4 +34,9 @@ void free(void *ptr);
 
 void *calloc(size_t nmemb, size_t size);
 
+static inline int abs(int j)
+{
+	return j > 0 ? j : -j;
+}
+
 #endif				/* !STDLIB_H_ */
