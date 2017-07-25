@@ -23,6 +23,7 @@
 */
 #define	MAGIC		0x1badb002
 #define FLAGS		0x3 /* PAGE_ALIGN | MEMORY_INFO */
+#define STACK_SIZE	8192
 
 	.section .multiboot
 	.type multiboot_header, @object
@@ -37,9 +38,17 @@ multiboot_header:
 	.global k_entry
 	.type k_entry, @function
 k_entry:
+	lea end_stack, %esp
 	push %ebx	/* multiboot info */
 	push %eax	/* magic */
 	call k_main	/* kernel entry point */
 .Lend:
 	jmp .Lend
 	.size k_entry, . - k_entry
+
+.section .bss
+stack:
+	.space STACK_SIZE
+	.align 16
+end_stack:
+.global end_stack
