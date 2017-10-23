@@ -37,10 +37,10 @@ struct monster {
 static int splash_screen(void)
 {
 	unsigned long t;
-	struct image *imgchiche = load_image("/chiche_big.bmp");
-	struct image *imgchef = load_image("/chef_big.bmp");
+	struct image *imgchiche = load_image(RES_PATH "/res/chiche_b.bmp");
+	struct image *imgchef = load_image(RES_PATH "/res/chef_big.bmp");
 	int blink = 0;
-	struct melody *intro = load_sound("/intro.csf");
+	struct melody *intro = load_sound(RES_PATH "/res/intro.csf");
 	int sel = 1;
 	int k = 0;
 
@@ -127,8 +127,8 @@ static void game_loop(struct image * img)
 	int win = 0;
 	int dead_monsters = 0;
 	int kill_seine_w = 0;
-	struct image *imgw = load_image("/seine_w.bmp");
-	struct melody *sound = load_sound("/ball.csf");
+	struct image *imgw = load_image(RES_PATH "/res/seine_w.bmp");
+	struct melody *sound = load_sound(RES_PATH "/res/ball.csf");
 
 	if (!img)
 		blue_screen("Unable to load chiche.bmp");
@@ -359,8 +359,8 @@ void entry(void)
 	switch_graphic();
 
 	while (1) {
-		game_loop(splash_screen()? load_image("/chiche.bmp") :
-			  load_image("/chef.bmp"));
+		game_loop(splash_screen()? load_image(RES_PATH "/res/chiche.bmp") :
+			  load_image(RES_PATH "/res/chef.bmp"));
 	}
 	/*
 	 * we should never arrive here...

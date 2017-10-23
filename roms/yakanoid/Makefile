@@ -26,12 +26,13 @@ TARGET	  = yakanoid
 OBJS	  = yakanoid.o
 ROM_TITLE = "yakanoid"
 ROM_FILES = \
-	    $(TARGET) \
-	    ball.bmp \
-	    bar.bmp \
-	    blue.bmp \
-	    green.bmp \
-	    red.bmp \
-	    yaka.bmp \
+	    res/ball.bmp \
+	    res/bar.bmp \
+	    res/blue.bmp \
+	    res/green.bmp \
+	    res/red.bmp \
+	    res/yaka2008.bmp \
+	    res/yaka2009.bmp \
+	    res/yaka.bmp \
 
 include ../roms.mk

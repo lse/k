@@ -26,14 +26,13 @@ TARGET	  = vaders
 OBJS	  = vaders.o
 ROM_TITLE = "vaders"
 ROM_FILES = \
-	    $(TARGET) \
-	    ball.bmp \
-	    ball.csf \
-	    chef.bmp \
-	    chef_big.bmp \
-	    chiche.bmp \
-	    chiche_big.bmp \
-	    intro.csf \
-	    seine_w.bmp \
+	    res/ball.bmp \
+	    res/ball.csf \
+	    res/chef_big.bmp \
+	    res/chef.bmp \
+	    res/chiche_b.bmp \
+	    res/chiche.bmp \
+	    res/intro.csf \
+	    res/seine_w.bmp \
 
 include ../roms.mk

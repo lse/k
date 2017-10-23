@@ -24,16 +24,16 @@
 #include "skate.h"
 
 struct gfx graphics[] = {
-	{TRICK_NONE, 7, "/skater1.bmp /skater2.bmp", NULL},
-	{TRICK_RUN, 7, "/skater3.bmp /skater4.bmp /skater5.bmp /skater6.bmp", NULL},
-	{TRICK_FLIP, 5, "/flip1.bmp /flip2.bmp /flip3.bmp /flip4.bmp /flip5.bmp", NULL},
-	{TRICK_UP, 4, "/skaterup.bmp", NULL},
-	{TRICK_SLIDE, 6, "/slide1.bmp /slide2.bmp", NULL},
-	{TRICK_CRASH, 6, "/crash.bmp", NULL},
-	{TRICK_ROTATE, 8, "/rotate1.bmp /rotate2.bmp /rotate3.bmp /rotate4.bmp /rotate5.bmp", NULL},
-	{BOX_UP, 0, "/boxup.bmp", NULL},
-	{BOX, 0, "/box.bmp", NULL},
-	{BOX_RAIL, 0, "/rail.bmp", NULL},
+	{TRICK_NONE, 7, RES_PATH "/res/skater1.bmp " RES_PATH "/res/skater2.bmp", NULL},
+	{TRICK_RUN, 7, RES_PATH "/res/skater3.bmp " RES_PATH "/res/skater4.bmp " RES_PATH "/res/skater5.bmp " RES_PATH "/res/skater6.bmp", NULL},
+	{TRICK_FLIP, 5, RES_PATH "/res/flip1.bmp " RES_PATH "/res/flip2.bmp " RES_PATH "/res/flip3.bmp " RES_PATH "/res/flip4.bmp " RES_PATH "/res/flip5.bmp", NULL},
+	{TRICK_UP, 4, RES_PATH "/res/skaterup.bmp", NULL},
+	{TRICK_SLIDE, 6, RES_PATH "/res/slide1.bmp " RES_PATH "/res/slide2.bmp", NULL},
+	{TRICK_CRASH, 6, RES_PATH "/res/crash.bmp", NULL},
+	{TRICK_ROTATE, 8, RES_PATH "/res/rotate1.bmp " RES_PATH "/res/rotate2.bmp " RES_PATH "/res/rotate3.bmp " RES_PATH "/res/rotate4.bmp " RES_PATH "/res/rotate5.bmp", NULL},
+	{BOX_UP, 0, RES_PATH "/res/boxup.bmp", NULL},
+	{BOX, 0, RES_PATH "/res/box.bmp", NULL},
+	{BOX_RAIL, 0, RES_PATH "/res/rail.bmp", NULL},
 	{0, 0, NULL, NULL}
 };
 

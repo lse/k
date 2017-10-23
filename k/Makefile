@@ -40,6 +40,9 @@ $(TARGET): LDFLAGS += -Wl,-Tk.lds
 $(TARGET): LDLIBS = -L../libs/libc -lc
 $(TARGET): $(OBJS)
 
+install: $(TARGET)
+	$(INSTALL) $(TARGET) $(INSTALL_ROOT)/$(TARGET)
+
 clean:
 	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
