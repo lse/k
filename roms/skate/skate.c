@@ -78,7 +78,7 @@ static void splash_screen(void)
 {
 	unsigned long t;
 	int blink = 0;
-	struct image *logo = load_image("/logo.bmp");
+	struct image *logo = load_image(RES_PATH "/res/logo.bmp");
 
 	while (getkey() == -1) {
 		draw_clear(BG_COLOR);

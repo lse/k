@@ -22,23 +22,22 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-TARGET	  = perrodlauncher
-OBJS	  = perrodlauncher.o
+TARGET	  = perrod
+OBJS	  = perrod.o
 ROM_TITLE = "perrodlauncher"
 ROM_FILES = \
-	    $(TARGET) \
-	    1.bmp \
-	    2.bmp \
-	    3.bmp \
-	    4.bmp \
-	    5.bmp \
-	    6.bmp \
-	    7.bmp \
-	    8.bmp \
-	    ball.csf \
-	    intro.csf \
-	    nuage.bmp \
-	    sol.bmp \
-	    yaka.bmp \
+	    res/1.bmp \
+	    res/2.bmp \
+	    res/3.bmp \
+	    res/4.bmp \
+	    res/5.bmp \
+	    res/6.bmp \
+	    res/7.bmp \
+	    res/8.bmp \
+	    res/ball.csf \
+	    res/intro.csf \
+	    res/nuage.bmp \
+	    res/sol.bmp \
+	    res/yaka.bmp \
 
 include ../roms.mk

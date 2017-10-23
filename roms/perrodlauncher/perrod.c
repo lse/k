@@ -32,9 +32,9 @@
 static void splash_screen(void)
 {
 	unsigned long t;
-	struct image *img = load_image("/yaka.bmp");
+	struct image *img = load_image(RES_PATH "/res/yaka.bmp");
 	int blink = 0;
-	struct melody *intro = load_sound("/intro.csf");
+	struct melody *intro = load_sound(RES_PATH "/res/intro.csf");
 
 	playsound(intro, -1);
 
@@ -74,15 +74,15 @@ static void splash_screen(void)
 static void game_loop(void)
 {
 	unsigned long t;
-	struct image *nuage = load_image("/nuage.bmp");
-	struct image *sol = load_image("/sol.bmp");
+	struct image *nuage = load_image(RES_PATH "/res/nuage.bmp");
+	struct image *sol = load_image(RES_PATH "/res/sol.bmp");
 	int angle = 45;
 	int x = 0;
 	int y = 0;
 	int dx = 0;
 	int dy = 0;
 	int k;
-	struct melody *sound = load_sound("/ball.csf");
+	struct melody *sound = load_sound(RES_PATH "/res/ball.csf");
 	struct image *pic[8];
 	int fire = 0;
 	int power = 0;
@@ -92,14 +92,14 @@ static void game_loop(void)
 	int score = 0;
 	char buf[12] = { 0 };
 
-	pic[0] = load_image("/1.bmp");
-	pic[1] = load_image("/2.bmp");
-	pic[2] = load_image("/3.bmp");
-	pic[3] = load_image("/4.bmp");
-	pic[4] = load_image("/5.bmp");
-	pic[5] = load_image("/6.bmp");
-	pic[6] = load_image("/7.bmp");
-	pic[7] = load_image("/8.bmp");
+	pic[0] = load_image(RES_PATH "/res/1.bmp");
+	pic[1] = load_image(RES_PATH "/res/2.bmp");
+	pic[2] = load_image(RES_PATH "/res/3.bmp");
+	pic[3] = load_image(RES_PATH "/res/4.bmp");
+	pic[4] = load_image(RES_PATH "/res/5.bmp");
+	pic[5] = load_image(RES_PATH "/res/6.bmp");
+	pic[6] = load_image(RES_PATH "/res/7.bmp");
+	pic[7] = load_image(RES_PATH "/res/8.bmp");
 	int p;
 	for (p = 0; p < 8; p++)
 		if (pic[p] == NULL)

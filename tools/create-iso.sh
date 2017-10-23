@@ -1,22 +1,20 @@
 #!/bin/sh
 
 iso_filename=$1
-base_dir=iso
+base_dir=$2
 
-mkdir -p $base_dir/
-mkdir -p $base_dir/roms/
 mkdir -p $base_dir/boot/grub/
 
-cp k/k $base_dir/
+function get_make_var()
+{
+	make -pn -C $2 | grep "^$1 = " | cut -d' ' -f 3-
+}
 
-find roms -name "*.rom" -exec cp {} $base_dir/roms/ \;
-
-for rom in $(find $base_dir/roms -name "*.rom") ; do
-	name=$(basename $rom .rom)
+shift 2
+for i in $@; do
 	cat <<EOF
-menuentry "k - $name" {
-	multiboot /k /$name
-	module /roms/$name.rom
+menuentry "k - $(get_make_var ROM_TITLE "$i")" {
+	multiboot /k /bin/$(get_make_var TARGET "$i")
 }
 EOF
 done > $base_dir/boot/grub/grub.cfg

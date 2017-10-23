@@ -26,10 +26,9 @@ TARGET	  = pong
 OBJS	  = pong.o
 ROM_TITLE = "pong"
 ROM_FILES = \
-	    $(TARGET) \
-	    ball.bmp \
-	    ball.ksf \
-	    chiche.bmp \
-	    intro.ksf \
+	    res/ball.bmp \
+	    res/ball.ksf \
+	    res/chiche.bmp \
+	    res/intro.ksf \
 
 include ../roms.mk

@@ -26,15 +26,14 @@ TARGET	  = hunter
 OBJS	  = hunter.o
 ROM_TITLE = "chichehunter"
 ROM_FILES = \
-	    $(TARGET) \
-	    ball.bmp \
-	    ball.csf \
-	    bush.bmp \
-	    chef.bmp \
-	    chef_big.bmp \
-	    chiche.bmp \
-	    chiche_big.bmp \
-	    intro.csf \
-	    seine_w.bmp \
+	    res/ball.bmp \
+	    res/ball.csf \
+	    res/bush.bmp \
+	    res/chef_big.bmp \
+	    res/chef.bmp \
+	    res/chiche_b.bmp \
+	    res/chiche.bmp \
+	    res/intro.csf \
+	    res/seine_w.bmp
 
 include ../roms.mk
