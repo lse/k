@@ -10,3 +10,5 @@ ASFLAGS = -m32
 LDFLAGS	= -nostdlib -m32 -Wl,--build-id=none -nostartfiles
 #LDFLAGS += -Wl,--gc-sections -Wl,--print-gc-sections
 ARFLAGS = src
+INSTALL = install -C -D
+INSTALL_ROOT ?= iso

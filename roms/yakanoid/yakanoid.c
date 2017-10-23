@@ -27,7 +27,7 @@
 
 static void splash_screen(void)
 {
-	struct image *yaka = load_image("/yaka.bmp");
+	struct image *yaka = load_image(RES_PATH "/res/yaka.bmp");
 	int blink = 0;
 	unsigned long t;
 
@@ -48,11 +48,11 @@ static void splash_screen(void)
 
 static void game_loop(void)
 {
-	struct image *brick_blue = load_image("/blue.bmp");
-	struct image *brick_red = load_image("/red.bmp");
-	struct image *brick_green = load_image("/green.bmp");
-	struct image *ball = load_image("/ball.bmp");
-	struct image *bar = load_image("/bar.bmp");
+	struct image *brick_blue = load_image(RES_PATH "/res/blue.bmp");
+	struct image *brick_red = load_image(RES_PATH "/res/red.bmp");
+	struct image *brick_green = load_image(RES_PATH "/res/green.bmp");
+	struct image *ball = load_image(RES_PATH "/res/ball.bmp");
+	struct image *bar = load_image(RES_PATH "/res/bar.bmp");
 	struct image *current = brick_blue;
 	int i, line, pos, k;
 	int mtrx[5][10];

@@ -31,9 +31,9 @@
 static void splash_screen(void)
 {
 	unsigned long t;
-	struct image *img = load_image("/chiche.bmp");
+	struct image *img = load_image(RES_PATH "/res/chiche.bmp");
 	int blink = 0;
-	struct melody *intro = load_sound("/intro.ksf");
+	struct melody *intro = load_sound(RES_PATH "/res/intro.ksf");
 
 	playsound(intro, -1);
 
@@ -73,14 +73,14 @@ static void splash_screen(void)
 static void game_loop(void)
 {
 	unsigned long t;
-	struct image *ball = load_image("/ball.bmp");
+	struct image *ball = load_image(RES_PATH "/res/ball.bmp");
 	int player1;
 	int player2;
 	int x, y;
 	int dx, dy;
 	int k;
 	int standby = 80;
-	struct melody *sound = load_sound("/ball.ksf");
+	struct melody *sound = load_sound(RES_PATH "/res/ball.ksf");
 
 	if (!ball)
 		blue_screen("Unable to load ball.bmp");
