@@ -14,6 +14,8 @@
 void *malloc(size_t size)
 {
 	void *ptr = sbrk(size);
+	if (ptr == (void *)-1)
+		ptr = NULL;
 
 	pr_debug("malloc(%u) = %p\n", size, ptr);
 
