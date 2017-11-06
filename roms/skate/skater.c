@@ -44,6 +44,7 @@ static void skater_anim(void)
 		case BOX_RAIL:
 			if (skater.slide)
 				break;
+			/* Falls through. */
 		default:
 			if (scrolling.freq < 6)
 				skater.trick = TRICK_RUN;
