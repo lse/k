@@ -164,7 +164,7 @@ static void game_loop(struct image * img)
 		draw_begin();
 
 		k = getkey();
-		if (k != -1) {
+		if (k > 0) {
 			if (k == KEY_ESC)
 				standby = !standby;
 

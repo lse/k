@@ -40,7 +40,7 @@ static void splash_screen(void)
 	if (!img)
 		blue_screen("Unable to load chiche.bmp");
 
-	while (getkey() == -1) {
+	while (getkey() < 0) {
 		t = gettick();
 
 		draw_begin();
@@ -112,7 +112,7 @@ static void game_loop(void)
 			 */
 
 			k = getkey();
-			if (k != -1) {
+			if (k > 0) {
 				if (k == KEY_DOWN)
 					player1 += 5;
 				if (k == KEY_UP)
