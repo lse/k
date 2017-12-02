@@ -143,5 +143,12 @@ enum e_mouse_codes {
 #define SYSCALL_GETMOUSE		13
 #define NR_SYSCALL			(SYSCALL_GETMOUSE + 1)
 
+#define ENOMEM				1 /* Not enough space */
+#define ENOENT				2 /* No such file or directory */
+#define EIO				3 /* I/O error */
+#define EINVAL				4 /* Invalid argument */
+#define ENOSYS				5 /* Invalid system call number */
+#define EBADF				6 /* fd is not an open file descriptor */
+#define EAGAIN				7 /* Temporary unavailable */
 
 #endif				/* !KSTD_H_ */

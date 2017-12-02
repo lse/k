@@ -41,7 +41,7 @@ static void splash_screen(void)
 	if (!img)
 		blue_screen("Unable to load yaka.bmp");
 
-	while (getkey() == -1) {
+	while (getkey() < 0) {
 		draw_begin();
 
 		draw_image(img, 5, 10);
@@ -121,7 +121,7 @@ static void game_loop(void)
 		 */
 
 		k = getkey();
-		if (k != -1) {
+		if (k > 0) {
 			if (k == KEY_RIGHT)
 				angle += 2;
 			if (k == KEY_LEFT)
