@@ -163,7 +163,7 @@ static void game_loop(struct image * img)
 
 		getmouse(&mouse_x, &mouse_y, &buttons);
 		k = getkey();
-		if (k != -1) {
+		if (k > 0) {
 			if (k == KEY_ESC)
 				standby = !standby;
 

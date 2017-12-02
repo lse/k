@@ -31,7 +31,7 @@ static void splash_screen(void)
 	int blink = 0;
 	unsigned long t;
 
-	while (getkey() == -1) {
+	while (getkey() < 0) {
 		t = gettick();
 		draw_begin();
 		draw_text("YAKANOID", 160 - 4 * 8, 10, 23, 0);
@@ -92,7 +92,7 @@ static void game_loop(void)
 		}
 
 		k = getkey();
-		if (k != -1) {
+		if (k > 0) {
 			if (k == 77)
 				pos += 10;
 			if (k == 75)
