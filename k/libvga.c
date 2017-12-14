@@ -21,7 +21,8 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#include "compiler.h"
+#include <k/compiler.h>
+
 #include "libvga.h"
 #include "io.h"
 
