@@ -14,7 +14,7 @@ $(TARGET): $(OBJS)
 install: $(TARGET)
 	$(INSTALL) $(TARGET) $(INSTALL_ROOT)/bin/$(TARGET)
 	for i in $(ROM_FILES); do \
-		$(INSTALL) $$i $(INSTALL_ROOT)/usr/$(TARGET)/$$i || exit 1; \
+		$(INSTALL) -m0644 $$i $(INSTALL_ROOT)/usr/$(TARGET)/$$i || exit 1; \
 	done
 
 clean:
