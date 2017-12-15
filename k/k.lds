@@ -31,22 +31,22 @@ SECTIONS
 
 	.text :
 	{
-		*(.multiboot) *(.text)
+		*(.multiboot) *(.text) *(.text.*)
 	}
 
 	.rodata :
 	{
-		*(.rodata)
+		*(.rodata) *(.rodata.*)
 	}
 
 	.data :
 	{
-		*(.data)
+		*(.data) *(.data.*)
 	}
 
 	.bss :
 	{
-		*(.bss) *(COMMON)
+		*(.bss) *(.bss.*) *(COMMON)
 	}
 
 	PROVIDE(_end = .);

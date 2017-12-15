@@ -37,21 +37,21 @@ SECTIONS
 
 	.text :
 	{
-		*(.text)
+		*(.text) *(.text.*)
 	} : code
 
 	.rodata :
 	{
-		*(.rodata)
+		*(.rodata) *(.rodata.*)
 	} : data
 
 	.data :
 	{
-		*(.data)
+		*(.data) *(.data.*)
 	} : data
 
 	.bss :
 	{
-		*(.bss) *(COMMON)
+		*(.bss) *(.bss.*) *(COMMON)
 	} : data
 }
