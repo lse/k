@@ -1,5 +1,5 @@
 CFLAGS	= -std=gnu99 -Os -Wall -Wextra -nostdinc -fno-builtin -ffreestanding \
-	  -m32 -fno-asynchronous-unwind-tables -fno-common -fno-pie
+	  -m32 -fno-asynchronous-unwind-tables -fno-common -fno-pie -march=i486
 # SSP causes compilation problems on Ubuntu
 CFLAGS	+= -fno-stack-protector
 #K_EXTRA_CFLAGS = -g3
