@@ -18,14 +18,10 @@ static void cache_initialize(struct cache *c, void *p, size_t sz, size_t bsize)
 	c->size = sz;
 	c->bsize = bsize;
 
-	union {
-		struct list l;
-		char data[bsize];
-	} *f = p;
-
 	for (size_t i = 0; i < sz / bsize; ++i) {
-		list_init(&f[i].l);
-		list_insert(c->freelist.prev, &f[i].l);
+		struct list *l = (struct list *)((char *) p + i * bsize);
+		list_init(l);
+		list_insert(c->freelist.prev, l);
 	}
 }
 
