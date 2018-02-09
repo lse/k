@@ -120,10 +120,6 @@ int getmouse(int *x, int *y, int *buttons)
 	return ((int)syscall3(SYSCALL_GETMOUSE, (u32)x, (u32)y, (u32)buttons));
 }
 
-int getkeymode(int mode)
-{
-	return ((int)syscall1(SYSCALL_GETKEYMODE, mode));
-}
 
 void set_palette(unsigned int *new_palette, size_t size)
 {
