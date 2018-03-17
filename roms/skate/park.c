@@ -23,23 +23,23 @@
 */
 #include "skate.h"
 
-enum e_gfx park[] = {
-	NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
-	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP,
+#define array_size(A) (sizeof (A) / sizeof (*A))
+
+static const enum e_gfx park_begin[] = {
+	NO_BOX, NO_BOX, NO_BOX, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP
+};
+
+static const enum e_gfx park_loop[] = {
 	NO_BOX, BOX_RAIL, BOX_RAIL, NO_BOX, BOX_UP, BOX, BOX, NO_BOX, NO_BOX, BOX_UP
 };
 
 struct scrolling scrolling;
 
 enum e_gfx get_park(size_t box) {
-	return park[box];
+	if (box < array_size(park_begin))
+		return park_begin[box];
+
+	return park_loop[(box - array_size(park_begin)) % array_size(park_loop)];
 }
 
 void scroll_stop(void)
