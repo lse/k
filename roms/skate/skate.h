@@ -77,10 +77,8 @@ struct gfx {
 #define BG_COLOR	BLACK
 #define BOX_WIDTH	40
 #define BOX_HEIGHT	40
-#define PARK_SIZE	100
 #define SPEED		2
 
-extern enum e_gfx park[PARK_SIZE];
 extern struct scrolling scrolling;
 extern unsigned long jiffies;
 extern struct skater skater;
@@ -93,6 +91,7 @@ int scroll_slowdown(void);
 int scroll_speedup(void);
 void scroll(void);
 
+enum e_gfx get_park(size_t box);
 void park_init(void);
 void park_draw(void);
 int box_height(int box, int shift);

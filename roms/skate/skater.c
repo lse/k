@@ -37,7 +37,7 @@ static void skater_anim(void)
 		if (!skater.trick_delay)
 			skater.trick = TRICK_NONE;
 	} else if (!skater.trick_delay) {
-		switch (park[skater.current_box]) {
+		switch (get_park(skater.current_box)) {
 		case BOX_UP:
 			skater.trick = TRICK_UP;
 			break;
@@ -99,7 +99,7 @@ static void skater_crash(void)
 
 void skater_slide(void)
 {
-	if (skater.trick_delay || park[skater.current_box] != BOX_RAIL)
+	if (skater.trick_delay || get_park(skater.current_box) != BOX_RAIL)
 		return;
 
 	if (scrolling.freq > 5)
@@ -178,7 +178,7 @@ void skater_draw(void)
 	max_x = skater_height(skater.x + skater.width / 2 + scrolling.x);
 
 	skater.current_box = get_box(max_x);
-	if (park[skater.current_box] != BOX_RAIL)
+	if (get_park(skater.current_box) != BOX_RAIL)
 		skater.slide = 0;
 
 	floor = GRAPHIC_HEIGHT - 10 - box_height(skater.current_box, get_shift(max_x));
