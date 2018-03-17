@@ -42,12 +42,6 @@ enum e_gfx {
 	NO_BOX
 };
 
-struct skatepark {
-	int size;
-	enum e_box *park;
-	unsigned long timeout;
-};
-
 struct skater {
 	int x;
 	int y;
