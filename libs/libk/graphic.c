@@ -574,7 +574,7 @@ void draw_text(const char *s, unsigned int x, unsigned int y, color_t fg, color_
 
 struct anim *load_anim(char *paths, int delay)
 {
-	char *p;
+	char *p, *bck;
 	char *filename;
 	struct anim *anim = NULL;
 	int i;
@@ -599,7 +599,11 @@ struct anim *load_anim(char *paths, int delay)
 		return NULL;
 	}
 
-	p = strdup(paths);
+	if (!(p = strdup(paths))) {
+		free(anim);
+		return NULL;
+	}
+	bck = p;
 
 	for (i = 0; i < anim->nr_img; i++) {
 		filename = p;
@@ -614,6 +618,7 @@ struct anim *load_anim(char *paths, int delay)
 			blue_screen("failed to load animation");
 	}
 
+	free(bck);
 	return anim;
 }
 
