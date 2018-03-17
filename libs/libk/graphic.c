@@ -594,7 +594,7 @@ struct anim *load_anim(char *paths, int delay)
 		if (*p == ' ')
 			anim->nr_img++;
 
-	if (!(anim->imgs = calloc(anim->nr_img, sizeof(struct image)))) {
+	if (!(anim->imgs = calloc(anim->nr_img, sizeof(struct image *)))) {
 		free(anim);
 		return NULL;
 	}
