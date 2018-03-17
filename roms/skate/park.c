@@ -38,6 +38,10 @@ enum e_gfx park[] = {
 
 struct scrolling scrolling;
 
+enum e_gfx get_park(size_t box) {
+	return park[box];
+}
+
 void scroll_stop(void)
 {
 	scrolling.timer1 = scrolling.timer2 = jiffies;
@@ -70,7 +74,7 @@ int get_shift(int x)
 
 int box_height(int box, int shift)
 {
-	switch (park[box]) {
+	switch (get_park(box)) {
 	case BOX_UP:
 		return shift;
 	case BOX_RAIL:
@@ -91,8 +95,9 @@ void park_draw(void)
 	int x = -get_shift(scrolling.x);
 
 	do {
-		if (graphics[park[box]].gfx)
-			draw_image_alpha(graphics[park[box]].gfx,
+		enum e_gfx p = get_park(box);
+		if (graphics[p].gfx)
+			draw_image_alpha(graphics[p].gfx,
 					 x, GRAPHIC_HEIGHT - 10 - BOX_HEIGHT,
 					 BG_COLOR);
 
