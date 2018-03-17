@@ -86,7 +86,6 @@ static void game_loop(void)
 		blue_screen("Unable to load ball.bmp");
 
 	player1 = 100;
-	player2 = 100;
 	x = 160;
 	y = 100;
 	dx = 2;
@@ -192,7 +191,6 @@ static void game_loop(void)
 				draw_end();
 				while (gettick() - t < 1000) ;
 				player1 = 100;
-				player2 = 100;
 				x = 160;
 				y = 100;
 				dx = 3;

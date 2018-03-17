@@ -186,13 +186,13 @@ static void libvga_write_regs(unsigned char *regs)
 	}
 
 	/* write AC registers */
-	a = inb(VGA_INSTAT_READ);
+	inb(VGA_INSTAT_READ);
 	for (i = 0; i < VGA_NUM_AC_REGS; i++) {
 		outb(VGA_AC_INDEX, i);
 		outb(VGA_AC_WRITE, *regs);
 		regs++;
 	}
-	a = inb(VGA_INSTAT_READ);
+	inb(VGA_INSTAT_READ);
 	outb(VGA_AC_INDEX, 0x20);
 
 	/* write the default palette to the DAC */

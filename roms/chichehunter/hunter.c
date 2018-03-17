@@ -147,7 +147,6 @@ static void game_loop(struct image * img)
 	max = 0;
 	may = 0.1;
 	alive = 0;
-	choot = 0;
 	can_choot = 1;
 
 	for (i = 0; i < NB_MONSTERS; i++)
