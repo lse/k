@@ -21,17 +21,18 @@
 * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-#define	MAGIC		0x1badb002
-#define FLAGS		0x3 /* PAGE_ALIGN | MEMORY_INFO */
+#include "multiboot.h"
+
+#define HEADER_FLAGS (MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO)
 #define STACK_SIZE	8192
 
 	.section .multiboot
 	.type multiboot_header, @object
 multiboot_header:
-	.align		4
-	.long		MAGIC
-	.long		FLAGS
-	.long		-(MAGIC + FLAGS)
+	.align		MULTIBOOT_HEADER_ALIGN
+	.long		MULTIBOOT_HEADER_MAGIC
+	.long		HEADER_FLAGS
+	.long		-(MULTIBOOT_HEADER_MAGIC + HEADER_FLAGS)
 	.size multiboot_header, . - multiboot_header
 
 	.section .text
