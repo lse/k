@@ -90,7 +90,7 @@ ssize_t read(int fd, void *buf, size_t count)
 	return ((ssize_t)syscall3(SYSCALL_READ, fd, (u32)buf, count));
 }
 
-off_t seek(int filedes, off_t offset, int whence)
+off_t lseek(int filedes, off_t offset, int whence)
 {
 	return ((off_t)syscall3(SYSCALL_SEEK, filedes, offset, whence));
 }
