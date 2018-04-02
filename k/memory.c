@@ -153,7 +153,7 @@ extern void *_end[]; /* kernel data end address */
 void memory_init(multiboot_info_t *info)
 {
 	unsigned int last_loaded_addr = info->mods_count
-		? ((module_t *)info->mods_addr)[info->mods_count - 1].mod_end
+		? ((multiboot_module_t *)info->mods_addr)[info->mods_count - 1].mod_end
 		: 0;
 
 	if (last_loaded_addr < (u32)_end) {
@@ -164,7 +164,7 @@ void memory_init(multiboot_info_t *info)
 	unsigned int reservation_addr = last_loaded_addr;
 	unsigned int reservation_len = (BASE_METADATA_CACHE_NMEMB + 1) * sizeof(struct cache);
 
-	unsigned int num_mem_zone = info->mmap_length / sizeof(memory_map_t);
+	unsigned int num_mem_zone = info->mmap_length / sizeof(multiboot_memory_map_t);
 
 	metadata_cache = (void *)reservation_addr;
 	cache_initialize(metadata_cache, metadata_cache + 1, BASE_METADATA_CACHE_NMEMB * sizeof(struct cache),
@@ -175,12 +175,12 @@ void memory_init(multiboot_info_t *info)
 
 	reservation_len += num_mem_zone * 2 * sizeof(struct memory_map);
 
-	memory_map_t *map = (void *)info->mmap_addr;
+	multiboot_memory_map_t *map = (void *)info->mmap_addr;
 
 	for (size_t i = 0; i < num_mem_zone; ++i) {
 		struct memory_map *m = cache_alloc(memory_map_cache);
 
-		memory_initialize(m, map[i].base_addr_low, map[i].length_low,
+		memory_initialize(m, (u32)map[i].addr, (u32)map[i].len,
 				  map[i].type - 1);
 
 		list_insert(memory_map.prev, &m->list);
