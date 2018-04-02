@@ -25,10 +25,8 @@ include ../../config.mk
 
 LIB	= libk.a
 OBJS	= \
-	  calloc.o \
 	  graphic.o \
 	  malloc.o \
-	  realloc.o \
 	  sound.o \
 	  strdup.o \
 	  syscalls.o \
@@ -36,6 +34,7 @@ OBJS	= \
 DEPS = $(OBJS:.o=.d)
 
 $(OBJS): CPPFLAGS += -MMD -Iinclude -I../../k/include/ -I../libc/include/
+malloc.o: CPPFLAGS += -include malloc-k.h
 
 all: $(LIB)
 
