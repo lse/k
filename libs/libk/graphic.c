@@ -484,7 +484,7 @@ struct bitmap_header {
 
 	int ppl = (bmp.size - (img->width * img->height)) / img->height;
 
-	if (seek(fd, bmp.offset, SEEK_SET) == (off_t) - 1) {
+	if (lseek(fd, bmp.offset, SEEK_SET) == (off_t) - 1) {
 		goto err;
 	}
 
@@ -493,7 +493,7 @@ struct bitmap_header {
 		if (rc < (int)img->width)
 			goto err;
 
-		rc = seek(fd, ppl, SEEK_CUR);
+		rc = lseek(fd, ppl, SEEK_CUR);
 
 		if (rc == (off_t)-1)
 			goto err;
