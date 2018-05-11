@@ -28,6 +28,8 @@ OBJS	= \
 	  crt0.o \
 	  k.o \
 	  libvga.o \
+	  list.o \
+	  memory.o \
 
 
 DEPS = $(OBJS:.o=.d)
