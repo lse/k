@@ -38,6 +38,8 @@ Here is the description of some important files:
     k/k.c               # kernel entry point
     k/multiboot.h       # Multiboot Specification header
     k/k.lds             # LD script for the kernel binary
+    k/memory.c          # kernel memory allocator
+    k/include/k/atapi.h # ATAPI related definitions
     k/include/k/kstd.h  # k standard definitions
     k/include/k/kfs.h   # KFS structures definitions
     k/include/k/types.h # kernel types definitions
