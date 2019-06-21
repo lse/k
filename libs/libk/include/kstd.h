@@ -16,5 +16,6 @@ void swap_frontbuffer(const void *buffer);
 int playsound(struct melody *melody, int repeat);
 int getmouse(int *x, int *y, int *buttons);
 int getkeymode(int mode);
+int readkey(struct key_event *event);
 
 #endif

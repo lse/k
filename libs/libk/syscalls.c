@@ -162,3 +162,8 @@ void set_palette(unsigned int *new_palette, size_t size)
 {
 	syscall2(SYSCALL_SETPALETTE, (u32)new_palette, size);
 }
+
+int readkey(struct key_event *event)
+{
+	return ((int)syscall1(SYSCALL_READKEY, (u32)event));
+}

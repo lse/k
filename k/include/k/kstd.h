@@ -115,6 +115,11 @@ enum e_mouse_codes {
 	BUTTON_RIGHT = 2
 };
 
+struct key_event {
+	int state; /* e_k_mode */
+	int key;
+};
+
 /* misc */
 #define O_RDONLY	0
 #define SEEK_SET	0
@@ -139,9 +144,9 @@ enum e_mouse_codes {
 #define SYSCALL_SWAP_FRONTBUFFER	10
 #define SYSCALL_PLAYSOUND		11
 #define SYSCALL_SETPALETTE		12
-
 #define SYSCALL_GETMOUSE		13
-#define NR_SYSCALL			(SYSCALL_GETMOUSE + 1)
+#define SYSCALL_READKEY			14
+#define NR_SYSCALL			(SYSCALL_READKEY + 1)
 
 #define ESUCCESS			0 /* Operation successful */
 #define ENOMEM				1 /* Not enough space */
