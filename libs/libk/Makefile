@@ -25,6 +25,7 @@ include ../../config.mk
 
 LIB	= libk.a
 OBJS	= \
+	  getkey.o \
 	  graphic.o \
 	  malloc.o \
 	  sound.o \

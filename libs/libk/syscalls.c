@@ -107,11 +107,6 @@ void *sbrk(ssize_t increment)
 	return ((void *)syscall1_const(SYSCALL_SBRK, increment));
 }
 
-int getkey(void)
-{
-	return ((int)syscall0(SYSCALL_GETKEY));
-}
-
 unsigned long gettick(void)
 {
 	return ((unsigned long)syscall0(SYSCALL_GETTICK));
