@@ -134,7 +134,7 @@ struct key_event {
 
 #define SYSCALL_WRITE			1
 #define SYSCALL_SBRK			2
-#define SYSCALL_GETKEY			3
+#define SYSCALL_GETKEY			3 /* Legacy system call, do not implement */
 #define SYSCALL_GETTICK			4
 #define SYSCALL_OPEN			5
 #define SYSCALL_READ			6
