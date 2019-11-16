@@ -3,6 +3,8 @@
 iso_filename=$1
 base_dir=$2
 
+unset MFLAGS MAKEFLAGS
+
 mkdir -p $base_dir/boot/grub/
 
 function get_make_var()
