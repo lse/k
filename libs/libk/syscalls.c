@@ -24,6 +24,16 @@
 #include <kstd.h>
 #include <stddef.h>
 
+/*
+ * `syscallX_const` wrappers can be used when the syscall does *not* modify the
+ * memory of the userland. This allows the compiler to optimize and reorder
+ * memory accesses.
+ *
+ * In doubt use the `syscallX` wrappers that won't allow the compiler do do
+ * assumption about the memory impact of a syscall. It is typically needed when
+ * a buffer is passed to and modified by the kernel.
+ */
+
 static inline u32 syscall0(int syscall_nb)
 {
 	u32 res;
@@ -33,7 +43,7 @@ static inline u32 syscall0(int syscall_nb)
 	return res;
 }
 
-static inline u32 syscall1(int syscall_nb, u32 ebx)
+static inline u32 syscall1_const(int syscall_nb, u32 ebx)
 {
 	u32 res;
 
@@ -42,7 +52,16 @@ static inline u32 syscall1(int syscall_nb, u32 ebx)
 	return res;
 }
 
-static inline u32 syscall2(int syscall_nb, u32 ebx, u32 ecx)
+static inline u32 syscall1(int syscall_nb, u32 ebx)
+{
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx) : "memory");
+
+	return res;
+}
+
+static inline u32 syscall2_const(int syscall_nb, u32 ebx, u32 ecx)
 {
 	u32 res;
 
@@ -51,7 +70,16 @@ static inline u32 syscall2(int syscall_nb, u32 ebx, u32 ecx)
 	return res;
 }
 
-static inline u32 syscall3(int syscall_nb, u32 ebx, u32 ecx, u32 edx)
+static inline u32 syscall2(int syscall_nb, u32 ebx, u32 ecx)
+{
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx), "c"(ecx) : "memory");
+
+	return res;
+}
+
+static inline u32 syscall3_const(int syscall_nb, u32 ebx, u32 ecx, u32 edx)
 {
 	u32 res;
 
@@ -60,14 +88,23 @@ static inline u32 syscall3(int syscall_nb, u32 ebx, u32 ecx, u32 edx)
 	return res;
 }
 
+static inline u32 syscall3(int syscall_nb, u32 ebx, u32 ecx, u32 edx)
+{
+	u32 res;
+
+	asm volatile ("int $0x80" : "=a"(res) : "a"(syscall_nb), "b"(ebx), "c"(ecx), "d"(edx) : "memory");
+
+	return res;
+}
+
 int write(const void *s, size_t length)
 {
-	return ((int)syscall2(SYSCALL_WRITE, (u32)s, length));
+	return ((int)syscall2_const(SYSCALL_WRITE, (u32)s, length));
 }
 
 void *sbrk(ssize_t increment)
 {
-	return ((void *)syscall1(SYSCALL_SBRK, increment));
+	return ((void *)syscall1_const(SYSCALL_SBRK, increment));
 }
 
 int getkey(void)
@@ -82,7 +119,7 @@ unsigned long gettick(void)
 
 int open(const char *pathname, int flags)
 {
-	return ((int)syscall2(SYSCALL_OPEN, (u32)pathname, flags));
+	return ((int)syscall2_const(SYSCALL_OPEN, (u32)pathname, flags));
 }
 
 ssize_t read(int fd, void *buf, size_t count)
@@ -92,12 +129,12 @@ ssize_t read(int fd, void *buf, size_t count)
 
 off_t lseek(int filedes, off_t offset, int whence)
 {
-	return ((off_t)syscall3(SYSCALL_SEEK, filedes, offset, whence));
+	return ((off_t)syscall3_const(SYSCALL_SEEK, filedes, offset, whence));
 }
 
 int close(int fd)
 {
-	return ((int)syscall1(SYSCALL_CLOSE, fd));
+	return ((int)syscall1_const(SYSCALL_CLOSE, fd));
 }
 
 int playsound(struct melody *melody, int repeat)
@@ -107,7 +144,7 @@ int playsound(struct melody *melody, int repeat)
 
 int setvideo(int mode)
 {
-	return ((int)syscall1(SYSCALL_SETVIDEO, mode));
+	return ((int)syscall1_const(SYSCALL_SETVIDEO, mode));
 }
 
 void swap_frontbuffer(const void *buffer)
