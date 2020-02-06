@@ -35,6 +35,7 @@ ROMS	= \
 ROMS	+= \
 	  roms/KGameBoy \
 	  roms/doom \
+
 #endif
 
 SUBDIRS	= \
