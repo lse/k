@@ -40,6 +40,8 @@
        }								\
      }									\
      while (0)
+#else
+#define assert(exp) ((void) 0)
 #endif
 
 #endif				/* !ASSERT_H */

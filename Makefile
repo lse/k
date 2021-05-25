@@ -66,7 +66,7 @@ clean:
 	do					\
 		$(MAKE) -C $$I $@ || exit 1;	\
 	done
-	$(RM) k.iso 
+	$(RM) k.iso
 	$(RM) -r root
 	$(RM) -r iso
 

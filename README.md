@@ -1,5 +1,7 @@
 # Introduction
 
+This is the student code for the [kernel course at EPITA](https://k.lse.epita.fr/).
+
 ## Table of contents
 
 1. [Checkout out](#checking-out)
@@ -17,7 +19,7 @@
 
 A readonly git repository given by the LSE can be cloned:
 
-    git clone git://git.lse.epita.fr/k.git
+    git clone git@github.com:lse/k.git
 
 ### Dependancies for building
 
