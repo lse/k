@@ -1,0 +1,27 @@
+# # start a fancy GUI
+# display_library: x, options="gui_debug"
+
+# Have a sane clock
+clock: sync=realtime
+
+# # start a GDB server
+# gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+
+# configure the disk drive
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+ata0-master: type=cdrom, path="k.iso", status=inserted
+boot: cdrom
+
+# write serial logs to stdout
+com1: enabled=1, mode=file, dev=/dev/stdout
+
+
+# log: out.log
+# #debugger_out: /dev/stdout
+
+# # super userful option here, you can find all modules here http://bochs.sourceforge.net/doc/docbook/user/howto.html#LOGOPTS-BY-DEVICE
+# # cpu0 and harddrv are the most useful
+# debug: action=ignore, harddrv=report, hdimage=report #, cpu0=report
+# info: action=ignore, cpu0=report
+# error: action=report
+# panic: action=ask
