@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 iso_filename=$1
 base_dir=$2
 
@@ -7,7 +9,7 @@ unset MFLAGS MAKEFLAGS
 
 mkdir -p $base_dir/boot/grub/
 
-function get_make_var()
+get_make_var()
 {
 	make -pn -C $2 | grep "^$1 = " | cut -d' ' -f 3-
 }
