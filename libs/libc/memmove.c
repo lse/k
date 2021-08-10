@@ -8,7 +8,7 @@ void *memmove(void *dest, const void *src, size_t n)
 
 	if (s < d && s + n > d) {
 		while (n-- > 0)
-			d[n - 1] = s[n - 1];
+			d[n] = s[n];
 		return dest;
 	}
 
