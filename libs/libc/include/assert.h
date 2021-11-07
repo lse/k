@@ -33,7 +33,7 @@
        if (!(exp))							\
        {								\
          printf("%s, %d: assertion '%s' failed\n",			\
-		__BASE_FILE__, __LINE__, exp);				\
+		__BASE_FILE__, __LINE__, #exp);				\
          printf("System halted.\n");					\
          while (1)							\
 	   continue;							\
