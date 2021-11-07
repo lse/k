@@ -23,8 +23,9 @@
 */
 #include <k/compiler.h>
 
-#include "libvga.h"
 #include "io.h"
+#include "libvga.h"
+#include "panic.h"
 
 /*
 ** Use to save the VGA plane 2, which contains the text font,
@@ -227,7 +228,7 @@ char *libvga_get_framebuffer(void)
 	case 3:
 		return (char *)0xB8000;
 	}
-	return (char *)0;
+	__builtin_unreachable();
 }
 
 void libvga_switch_mode13h(void)
