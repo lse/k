@@ -592,6 +592,7 @@ struct anim *load_anim(char *paths, int delay)
 	}
 
 	if (!(p = strdup(paths))) {
+		free(anim->imgs);
 		free(anim);
 		return NULL;
 	}
