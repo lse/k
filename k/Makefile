@@ -21,53 +21,31 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include config.mk
+include ../config.mk
 
-ROMS	= \
-	  roms/chichehunter \
-	  roms/chichepong \
-	  roms/chichevaders \
-	  roms/perrodlauncher \
-	  roms/skate \
-	  roms/yakanoid \
+TARGET	= k
+OBJS	= \
+	  crt0.o \
+	  k.o \
+	  libvga.o \
+	  list.o \
+	  memory.o \
 
 
-SUBDIRS	= \
-	  $(ROMS) \
-	  k \
-	  libs/libc \
-	  libs/libk \
-	  tools/mkkfs \
+DEPS = $(OBJS:.o=.d)
 
-ABS_INSTALL = $(abspath $(INSTALL_ROOT))
+all: $(TARGET)
 
-all: k.iso
+$(TARGET): CPPFLAGS += -MMD -Iinclude -I ../libs/libc/include/
+$(TARGET): CFLAGS += $(K_EXTRA_CFLAGS)
+$(TARGET): LDFLAGS += -Wl,-Tk.lds
+$(TARGET): LDLIBS = -L../libs/libc -lc
+$(TARGET): $(OBJS)
 
-k: libs/libc
-
-$(ROMS): tools/mkkfs libs/libc libs/libk
-
-k.iso: install
-	./tools/create-iso.sh $@ $(INSTALL_ROOT) $(ROMS)
-
-$(SUBDIRS):
-	$(MAKE) -C $@
-
-install: libs/libc libs/libk k
-	mkdir -p $(ABS_INSTALL)
-	for I in $(ROMS);			\
-	do					\
-		$(MAKE) INSTALL_ROOT=$(ABS_INSTALL) -C $$I $@ || exit 1;	\
-	done
-	$(MAKE) INSTALL_ROOT=$(ABS_INSTALL) -C k $@
+install: $(TARGET)
+	$(INSTALL) $(TARGET) $(INSTALL_ROOT)/$(TARGET)
 
 clean:
-	for I in $(SUBDIRS);			\
-	do					\
-		$(MAKE) -C $$I $@ || exit 1;	\
-	done
-	$(RM) k.iso
-	$(RM) -r root
-	$(RM) -r iso
+	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
-.PHONY: $(SUBDIRS) $(INSTALL_ROOT) install
+-include $(DEPS)
