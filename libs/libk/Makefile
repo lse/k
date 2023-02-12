@@ -34,6 +34,7 @@ OBJS	= \
 DEPS = $(OBJS:.o=.d)
 
 $(OBJS): CPPFLAGS += -MMD -Iinclude -I../../k/include/ -I../libc/include/
+malloc.o: CFLAGS += -Wno-gnu-null-pointer-arithmetic -Wno-unused-but-set-variable
 malloc.o: CPPFLAGS += -include malloc-k.h
 
 all: $(LIB)
