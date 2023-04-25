@@ -25,7 +25,6 @@
 
 #include "io.h"
 #include "libvga.h"
-#include "panic.h"
 
 /*
 ** Use to save the VGA plane 2, which contains the text font,
