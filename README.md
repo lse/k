@@ -6,7 +6,7 @@ This is the student code for the [kernel course at EPITA](https://k.lse.epita.fr
 
 1. [Checkout out](#checking-out)
     1. [The tarball](#the-tarball)
-    1. [Dependancies](#dependancies-for-building)
+    2. [Dependencies](#dependencies-for-building)
     3. [Source tree](#source-tree)
     4. [Intel Manuals](#intel-manuals)
 2. [Build System](#build-system)
@@ -21,7 +21,7 @@ A readonly git repository given by the LSE can be cloned:
 
     git clone git@github.com:lse/k.git
 
-### Dependancies for building
+### Dependencies for building
 
 * gcc-multilib
 * grub2
