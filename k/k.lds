@@ -34,7 +34,10 @@ SECTIONS
 		*(.multiboot) *(.text) *(.text.*)
 	}
 
-	.rodata :
+	/* The alignment allows LD to generate multiple LOAD segments and avoid
+	 * RWX permissions warning.
+	 */
+	.rodata : ALIGN(4096)
 	{
 		*(.rodata) *(.rodata.*)
 	}
