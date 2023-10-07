@@ -11,6 +11,8 @@ CPPFLAGS += -I$(shell $(CC) -m32 --print-file-name=include)
 
 ASFLAGS = -m32
 LDFLAGS = -nostdlib -m32 -Wl,--build-id=none -nostartfiles -static
+# Tell `ld` we don't need an executable stack
+LDFLAGS += -Wl,-znoexecstack
 # Detect and remove unused sections while linking the objects
 LDFLAGS += -Wl,--gc-sections
 #LDFLAGS += -Wl,--print-gc-sections
