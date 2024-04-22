@@ -143,6 +143,7 @@ enum e_mouse_codes {
 #define SYSCALL_GETMOUSE		13
 #define NR_SYSCALL			(SYSCALL_GETMOUSE + 1)
 
+#define ESUCCESS			0 /* Operation successful */
 #define ENOMEM				1 /* Not enough space */
 #define ENOENT				2 /* No such file or directory */
 #define EIO				3 /* I/O error */
