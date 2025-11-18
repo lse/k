@@ -50,3 +50,5 @@ clean:
 	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
 -include $(DEPS)
+
+.PHONY: install clean all

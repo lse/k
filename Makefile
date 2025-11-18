@@ -70,4 +70,5 @@ clean:
 	$(RM) -r root
 	$(RM) -r iso
 
-.PHONY: $(SUBDIRS) $(INSTALL_ROOT) install
+
+.PHONY: $(SUBDIRS) $(INSTALL_ROOT) install clean all

@@ -47,3 +47,5 @@ clean:
 	$(RM) $(OBJS) $(DEPS) $(LIB)
 
 -include $(DEPS)
+
+.PHONY: clean all

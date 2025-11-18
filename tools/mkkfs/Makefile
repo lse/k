@@ -38,3 +38,5 @@ clean:
 	$(RM) $(OBJS) $(DEPS) $(TARGET)
 
 -include $(DEPS)
+
+.PHONY: clean all
