@@ -21,8 +21,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-include ../../config.mk
-
 TARGET	= mkkfs
 OBJS	= mkkfs.o
 DEPS	= $(OBJS:.o=.d)
@@ -31,7 +29,6 @@ all: $(TARGET)
 
 $(TARGET): CPPFLAGS += -MMD -I../../k/include -D_GNU_SOURCE
 $(TARGET): CFLAGS = -Wall -Wextra -std=c99
-$(TARGET): LDFLAGS =
 $(TARGET): $(OBJS)
 
 clean:
